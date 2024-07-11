@@ -8,7 +8,7 @@ token = 'lip_N2yQyunSWcrSzKlnSW9k'
 session = berserk.TokenSession(token)
 client = berserk.Client(session)
 engine = chess.engine.SimpleEngine.popen_uci("D:\\chess\\stockfish\\stockfish-windows-x86-64-sse41-popcnt.exe")
-engine.configure({"Threads": 4})  # Установка числа потоков
+engine.configure({"Threads": 4})  # Установка числа потоков (1-32)
 
 def evaluate_position(board, depth=10):
     info = engine.analyse(board, chess.engine.Limit(depth=depth))
