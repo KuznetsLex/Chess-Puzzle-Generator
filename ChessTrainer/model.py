@@ -2,12 +2,16 @@ import berserk
 import chess
 import chess.engine
 import pandas as pd
+import configparser as conf
+
+config = conf.RawConfigParser()
+config.read('./ChessTrainer/config.properties')
 
 # Инициализация API
-token = 'lip_N2yQyunSWcrSzKlnSW9k'
+token = config.get("Main", "LichessToken")
 session = berserk.TokenSession(token)
 client = berserk.Client(session)
-engine = chess.engine.SimpleEngine.popen_uci("D:\\chess\\stockfish\\stockfish-windows-x86-64-sse41-popcnt.exe")
+engine = chess.engine.SimpleEngine.popen_uci(config.get("Main", "EngineStr"))
 engine.configure({"Threads": 4})  # Установка числа потоков (1-32)
 
 def evaluate_position(board, depth=10):
