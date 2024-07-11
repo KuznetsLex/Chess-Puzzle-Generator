@@ -1,3 +1,5 @@
+import csv
+
 import berserk
 import chess
 import chess.engine
@@ -10,6 +12,12 @@ client = berserk.Client(session)
 engine = chess.engine.SimpleEngine.popen_uci("D:\\chess\\stockfish\\stockfish-windows-x86-64-sse41-popcnt.exe")
 engine.configure({"Threads": 4})  # Установка числа потоков (1-32)
 
+def write_to_csv(data, filename):
+    with open(filename, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(data.columns)  # Запись заголовков столбцов
+        for index, row in data.iterrows():
+            writer.writerow(row)
 def evaluate_position(board, depth=10):
     info = engine.analyse(board, chess.engine.Limit(depth=depth))
     # Получение оценки позиции
@@ -17,7 +25,6 @@ def evaluate_position(board, depth=10):
 def get_best_move(board, depth=10):
     result = engine.play(board, chess.engine.Limit(depth=depth))
     return result.move
-
 def analyze_games(usernames, max_games=10):
     data = []
     for username in usernames:
@@ -112,4 +119,4 @@ def analyze_games(usernames, max_games=10):
 if __name__ == "__main__":
     usernames = ['Ro_ro2', 'Ali430','GelioChess', 'faceofmarlboro', 'kolosok2008']
     data = analyze_games(usernames, max_games=10)
-    data.to_csv('chess_data.csv', index=False)
+    write_to_csv(data, 'chess_data.csv')
