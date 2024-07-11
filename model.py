@@ -13,8 +13,7 @@ engine.configure({"Threads": 4})  # Установка числа потоков
 def evaluate_position(board, depth=10):
     info = engine.analyse(board, chess.engine.Limit(depth=depth))
     # Получение оценки позиции
-    return info['score'].relative.score(mate_score=10000) / 100  # Преобразование в пешки
-
+    return info['score'].relative.score(mate_score=10000) / 100  # Преобразование
 def get_best_move(board, depth=10):
     result = engine.play(board, chess.engine.Limit(depth=depth))
     return result.move
@@ -40,7 +39,7 @@ def analyze_games(usernames, max_games=10):
             bad_moves = 0
             total_moves = 0
 
-            # Анализируем только первые 20 ходов, только ходы пользователя
+            # Анализируем все ходы
             for move_index, move_san in enumerate(moves):
                 is_users_move = (player_color == 'white' and move_index % 2 == 0) or (
                     player_color == 'black' and move_index % 2 != 0)
