@@ -14,17 +14,7 @@ class GameState:
         The second character represents the type of the piece: 'R', 'N', 'B', 'Q', 'K' or 'p'.
         "--" represents an empty space with no piece.
         """
-        # self.board = [
-        #     ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-        #     ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
-        #     ["--", "--", "--", "--", "--", "--", "--", "--"],
-        #     ["--", "--", "--", "--", "--", "--", "--", "--"],
-        #     ["--", "--", "--", "--", "--", "--", "--", "--"],
-        #     ["--", "--", "--", "--", "--", "--", "--", "--"],
-        #     ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
-        #     ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]]
-        # fen = "2k4r/p5p1/1p5r/2p2P2/3PBPp1/1R2n1K1/P4RP1/8 b - - 0 32".split() #TODO получать fen извне
-        difficultyLevel = 2 #TODO получать уровень пазла извне
+        difficultyLevel = 4 #TODO получать уровень пазла извне
         puzzleManager = Puzzle(difficultyLevel)
         self.puzzle = puzzleManager.parse()
         puzzleId = self.puzzle[0]
@@ -78,6 +68,19 @@ class GameState:
             i += 1
         return board
 
+    def squareCoordsCoverter(self, coords):
+        row = 8 - int(coords[1])
+        x = coords[0]
+        match x:
+            case 'a': col = 0
+            case 'b': col = 1
+            case 'c': col = 2
+            case 'd': col = 3
+            case 'e': col = 4
+            case 'f': col = 5
+            case 'g': col = 6
+            case 'h': col = 7
+        return (row,col)
     def getWhiteKingLocation(self, board):
         for i in range (8):
             for j in range(8):

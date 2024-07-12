@@ -58,6 +58,8 @@ def main():
         player_one = not game_state.white_to_move
         player_two = not player_one
 
+    сurMove = 0
+    puzzleMoveSet = game_state.puzzle[2].split()
     while running:
         human_turn = (game_state.white_to_move and player_one) or (not game_state.white_to_move and player_two)
         for e in p.event.get():
@@ -78,28 +80,31 @@ def main():
                         player_clicks.append(square_selected)  # append for both 1st and 2nd click
                     if len(player_clicks) == 2 and human_turn:  # after 2nd click
                         move = ChessEngine.Move(player_clicks[0], player_clicks[1], game_state.board)
-                        for i in range(len(valid_moves)):
-                            if move == valid_moves[i]:
-                                game_state.makeMove(valid_moves[i])
-                                move_made = True
-                                animate = True
-                                square_selected = ()  # reset user clicks
-                                player_clicks = []
+                        requiredMove = ChessEngine.Move(game_state.squareCoordsCoverter(puzzleMoveSet[сurMove][0:2]),
+                                                        game_state.squareCoordsCoverter(puzzleMoveSet[сurMove][2:4]),
+                                                        game_state.board)  # менять первый индекс
+                        if move == requiredMove:
+                            game_state.makeMove(move)
+                            move_made = True
+                            animate = True
+                            square_selected = ()  # reset user clicks
+                            player_clicks = []
+                            сurMove+=1
                         if not move_made:
                             player_clicks = [square_selected]
 
             # key handler
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:  # undo when 'z' is pressed
+                    if (сurMove != 0):
+                        сurMove -= 1
                     game_state.undoMove()
                     move_made = True
                     animate = False
                     game_over = False
-                    if ai_thinking:
-                        move_finder_process.terminate()
-                        ai_thinking = False
                     move_undone = True
-                if e.key == p.K_r:  # reset the game when 'r' is pressed
+
+                if e.key == p.K_r:  # get new random puzzle when 'r' is pressed
                     game_state = ChessEngine.GameState()
                     valid_moves = game_state.getValidMoves()
                     square_selected = ()
@@ -114,20 +119,14 @@ def main():
 
         # AI move finder
         if not game_over and not human_turn and not move_undone:
-            if not ai_thinking:
-                ai_thinking = True
-                return_queue = Queue()  # used to pass data between threads
-                move_finder_process = Process(target=ChessAI.findBestMove, args=(game_state, valid_moves, return_queue))
-                move_finder_process.start()
-
-            if not move_finder_process.is_alive():
-                ai_move = return_queue.get()
-                if ai_move is None:
-                    ai_move = ChessAI.findRandomMove(valid_moves)
-                game_state.makeMove(ai_move)
-                move_made = True
-                animate = True
-                ai_thinking = False
+            ai_move = ChessEngine.Move(game_state.squareCoordsCoverter(puzzleMoveSet[сurMove][0:2]),
+                                                        game_state.squareCoordsCoverter(puzzleMoveSet[сurMove][2:4]),
+                                                        game_state.board)
+            game_state.makeMove(ai_move)
+            сurMove+=1
+            move_made = True
+            animate = True
+            # ai_thinking = False
 
         if move_made:
             if animate:

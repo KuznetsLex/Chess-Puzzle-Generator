@@ -164,3 +164,4 @@ cython_debug/
 *.properties
 .DS_Store
 .idea
+ChessPuzzleGenerator/ChessAI.py
