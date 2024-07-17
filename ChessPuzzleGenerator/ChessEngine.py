@@ -4,6 +4,8 @@ Determining valid moves at current state.
 It will keep move log.
 """
 from ChessPuzzleGenerator.PuzzleManager import Puzzle
+from ChessPuzzleGenerator.Generator import Generator
+from Utils import Utils
 
 
 class GameState:
@@ -14,15 +16,23 @@ class GameState:
         The second character represents the type of the piece: 'R', 'N', 'B', 'Q', 'K' or 'p'.
         "--" represents an empty space with no piece.
         """
-        difficultyLevel = 4 #TODO получать уровень пазла извне
+
+        difficultyLevel = 4
+
+
+
+        #TODO получать уровень пазла извне
         puzzleManager = Puzzle(difficultyLevel)
         self.puzzle = puzzleManager.parse()
         puzzleId = self.puzzle[0]
         print(puzzleId)
+        puzzleFen = self.puzzle[1]
+        print(puzzleFen)
         puzzleMoveSet = self.puzzle[2]
         print(puzzleMoveSet)
-        puzzleFen = self.puzzle[1]
-        self.board = self.fenToBoard(puzzleFen)
+
+
+        self.board = Utils.fenToBoard(puzzleFen)
         self.white_to_move = puzzleFen.split()[1] == 'w'
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N": self.getKnightMoves,
                               "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
@@ -43,44 +53,8 @@ class GameState:
         self.castle_rights_log = [CastleRights(self.current_castling_rights.wks, self.current_castling_rights.bks,
                                                self.current_castling_rights.wqs, self.current_castling_rights.bqs)]
 
-    def fenToBoard(self, fen):
-        listFen = fen.split();
-        boardFen = listFen[0].split('/')
-        board = [[0 for _ in range(8)] for _ in range(8)]
-        i = 0
-        for row in boardFen:
-            j = 0
-            for x in row:
-                if x == 'p':
-                    board[i][j] = "bp"
-                elif x == 'P':
-                    board[i][j] = "wp"
-                elif x.isdigit():
-                    j -= 1
-                    for k in range(int(x)):
-                        j += 1
-                        board[i][j] = "--"
-                elif x.islower():
-                    board[i][j] = 'b'+x.upper()
-                elif x.isupper():
-                    board[i][j] = 'w' + x
-                j += 1
-            i += 1
-        return board
 
-    def squareCoordsCoverter(self, coords):
-        row = 8 - int(coords[1])
-        x = coords[0]
-        match x:
-            case 'a': col = 0
-            case 'b': col = 1
-            case 'c': col = 2
-            case 'd': col = 3
-            case 'e': col = 4
-            case 'f': col = 5
-            case 'g': col = 6
-            case 'h': col = 7
-        return (row,col)
+
     def getWhiteKingLocation(self, board):
         for i in range (8):
             for j in range(8):
