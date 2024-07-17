@@ -52,3 +52,4 @@ class Utils:
             count = 0
             fen += "/"
         return fen[:-1]
+

@@ -7,6 +7,7 @@ import pygame as p
 import ChessEngine
 from Utils import Utils
 import sys
+from Generator import Generator
 from multiprocessing import Process, Queue
 
 BOARD_WIDTH = BOARD_HEIGHT = 512
@@ -29,6 +30,8 @@ def loadImages():
 
 
 def main():
+
+
     """
     The main driver for our code.
     This will handle user input and updating the graphics.
@@ -52,13 +55,8 @@ def main():
     move_log_font = p.font.SysFont("Arial", 14, False, False)
     # player_one = True  # if a human is playing white, then this will be True, else False
     # player_two = False  # if a hyman is playing white, then this will be True, else False
-    if game_state.puzzle[1] == 'b':
-        player_one = game_state.white_to_move
-        player_two = not player_one
-    else:
-        player_one = not game_state.white_to_move
-        player_two = not player_one
-
+    player_one = not game_state.white_to_move
+    player_two = not player_one
     сurMove = 0
     puzzleMoveSet = game_state.puzzle[2].split()
     while running:
