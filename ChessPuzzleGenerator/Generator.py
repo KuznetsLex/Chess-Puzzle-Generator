@@ -11,7 +11,21 @@ class Generator:
 
 
     def makeMove(self, fen, move):
-        newFen = ""
+        fen = fen.split(" ")
+        fenBoard = fen[0].split("/")
+
+        start_coord = Utils.squareCoordsCoverter((move[0], move[1]))
+        finish_coord = Utils.squareCoordsCoverter((move[2], move[3]))
+
+        board = Utils.fenToBoard(fenBoard)
+
+        figure = board[start_coord[0]][start_coord[1]]
+        board[start_coord[0]][start_coord[1]] = "-"
+        board[finish_coord[0]][finish_coord[1]] = figure
+
+        fen[0] = Utils.boardToFen(board)
+        fen[-1] = str(int(fen[-1]) + 1)
+        newFen = fen.join()
         return newFen
 
     def getPieceByCoords(self, fen, coords):
@@ -29,6 +43,7 @@ class Generator:
                 colIndex+=int(item)
             else:
                 colIndex+=1
+
 
 
 
