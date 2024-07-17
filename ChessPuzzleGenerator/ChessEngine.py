@@ -5,7 +5,6 @@ It will keep move log.
 """
 from ChessPuzzleGenerator.PuzzleManager import Puzzle
 from ChessPuzzleGenerator.Generator import Generator
-from Utils import Utils
 
 
 class GameState:
@@ -32,7 +31,7 @@ class GameState:
         print(puzzleMoveSet)
 
 
-        self.board = Utils.fenToBoard(puzzleFen)
+        self.board = self.fenToBoard(puzzleFen)
         self.white_to_move = puzzleFen.split()[1] == 'w'
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N": self.getKnightMoves,
                               "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
@@ -53,7 +52,30 @@ class GameState:
         self.castle_rights_log = [CastleRights(self.current_castling_rights.wks, self.current_castling_rights.bks,
                                                self.current_castling_rights.wqs, self.current_castling_rights.bqs)]
 
-
+    def fenToBoard(self, fen):
+        listFen = fen.split();
+        boardFen = listFen[0].split('/')
+        board = [[0 for _ in range(8)] for _ in range(8)]
+        i = 0
+        for row in boardFen:
+            j = 0
+            for x in row:
+                if x == 'p':
+                    board[i][j] = "bp"
+                elif x == 'P':
+                    board[i][j] = "wp"
+                elif x.isdigit():
+                    j -= 1
+                    for k in range(int(x)):
+                        j += 1
+                        board[i][j] = "--"
+                elif x.islower():
+                    board[i][j] = 'b'+x.upper()
+                elif x.isupper():
+                    board[i][j] = 'w' + x
+                j += 1
+            i += 1
+        return board
 
     def getWhiteKingLocation(self, board):
         for i in range (8):

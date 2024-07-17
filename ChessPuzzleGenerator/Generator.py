@@ -1,4 +1,4 @@
-
+from Utils import Utils
 
 class Generator:
     def __int__(self, puzzleOrig):
@@ -14,10 +14,21 @@ class Generator:
         newFen = ""
         return newFen
 
-    def getPieceByCoord(self, fen, coord):
+    def getPieceByCoords(self, fen, coords):
         fen = fen.split()
         fenBoard = fen[0].split('/')
-        # for i in fenBoard:
+        coords = Utils.squareCoordsCoverter(coords)
+        pieceRow = fenBoard[coords[0]]
+        pieceColIndex = coords[1]
+        colIndex = 0
+
+        for item in pieceRow:
+            if colIndex == pieceColIndex:
+                return item
+            if item.isdigit():
+                colIndex+=int(item)
+            else:
+                colIndex+=1
 
 
 
