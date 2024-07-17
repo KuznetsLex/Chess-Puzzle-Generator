@@ -25,7 +25,6 @@ class Generator:
 
         fen[0] = Utils.boardToFen(board)
         fen[-1] = str(int(fen[-1]) + 1)
-
         newFen = fen.join()
         return newFen
 
