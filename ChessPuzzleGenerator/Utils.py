@@ -1,5 +1,5 @@
 
-def squareCoordsConverter(coords):
+def squareToCoordsConverter(coords):
     row = 8 - int(coords[1])
     x = coords[0]
     match x:
@@ -54,11 +54,11 @@ def boardToPiecePlacement(board):
     return placement[:-1]
 
 
-def getPieceByCoords(placement, coords):
+def getPieceBySquare(placement, square):
     listPlacement = placement.split('/')
-    coords = squareCoordsConverter(coords)
-    pieceRow = listPlacement[coords[0]]
-    pieceColIndex = coords[1]
+    square = squareToCoordsConverter(square)
+    pieceRow = listPlacement[square[0]]
+    pieceColIndex = square[1]
     colIndex = 0
 
     for item in pieceRow:
@@ -71,8 +71,8 @@ def getPieceByCoords(placement, coords):
 
 
 def makeMove(placement, move):
-    start_coord = squareCoordsConverter((move[0], move[1]))
-    finish_coord = squareCoordsConverter((move[2], move[3]))
+    start_coord = squareToCoordsConverter((move[0], move[1]))
+    finish_coord = squareToCoordsConverter((move[2], move[3]))
 
     board = piecePlacementToBoard(placement)
     figure = board[start_coord[0]][start_coord[1]]

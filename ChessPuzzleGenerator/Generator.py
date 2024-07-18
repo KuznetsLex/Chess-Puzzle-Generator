@@ -8,7 +8,7 @@ def generate(puzzleOrig):
     origPiecePlacement = origFen.split()[0]
 
     newPuzzle = []
-    firstBotMove = origMoveSet[0:5]
+    firstBotMove = origMoveSet.split()[0]
     placementAfter1 = Utils.makeMove(origPiecePlacement, firstBotMove)
 
     print(origPiecePlacement)

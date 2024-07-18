@@ -4,7 +4,6 @@ Determining valid moves at current state.
 It will keep move log.
 """
 from ChessPuzzleGenerator.PuzzleManager import Puzzle
-from ChessPuzzleGenerator.Generator import Generator
 
 
 class GameState:
