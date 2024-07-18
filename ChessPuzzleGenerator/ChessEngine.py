@@ -22,7 +22,12 @@ class GameState:
 
         #TODO получать уровень пазла извне
         puzzleManager = Puzzle(difficultyLevel)
-        self.puzzle = puzzleManager.parse()
+
+
+        # self.puzzle = puzzleManager.parse()
+        self.puzzle = ["WTZrK", "2br1r2/p4p2/5b1k/1p2qP2/2ppPR1p/P2P1B2/1PPQ3P/R6K b - - 0 31", "f8g8 f4h4 h6g7 d2h6"]
+
+
         puzzleId = self.puzzle[0]
         print(puzzleId)
         puzzleFen = self.puzzle[1]

@@ -15,12 +15,11 @@ class Utils:
         return (row,col)
 
     @staticmethod
-    def fenToBoard(fen):
-        listFen = fen.split()
-        boardFen = listFen[0].split('/')
+    def piecePlacementToBoard(placement):
+        listPlacement = placement.split('/')
         board = [[0 for _ in range(8)] for _ in range(8)]
         i = 0
-        for row in boardFen:
+        for row in listPlacement:
             j = 0
             for x in row:
                 if x.isdigit():
@@ -34,22 +33,22 @@ class Utils:
             i += 1
         return board
     @staticmethod
-    def boardToFen(board):
-        fen = ""
+    def boardToPiecePlacement(board):
+        placement = ""
         count = 0
         for i in range(8):
             for j in range(8):
                 if board[i][j] == "-":
                     count += 1
                 elif count != 0:
-                    fen += str(count)
+                    placement += str(count)
                     count = 0
-                    fen += board[i][j]
+                    placement += board[i][j]
                 else:
-                    fen += board[i][j]
+                    placement += board[i][j]
             if count != 0:
-                fen += str(count)
+                placement += str(count)
             count = 0
-            fen += "/"
-        return fen[:-1]
+            placement += "/"
+        return placement[:-1]
 
