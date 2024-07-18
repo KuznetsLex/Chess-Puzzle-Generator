@@ -40,8 +40,6 @@ class Puzzle:
 
     def parse(self):
         ind = rnd.randint(self.from_ind, self.to_ind)
-        puzzle = []
-        puzzle.append(self.df_mateIn2.iloc[ind]['PuzzleId'])
-        puzzle.append(self.df_mateIn2.iloc[ind]['FEN'])
-        puzzle.append(self.df_mateIn2.iloc[ind]['Moves'])
+        puzzle = [self.df_mateIn2.iloc[ind]['PuzzleId'], self.df_mateIn2.iloc[ind]['FEN'],
+                  self.df_mateIn2.iloc[ind]['Moves']]
         return puzzle

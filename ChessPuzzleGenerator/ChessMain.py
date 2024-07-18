@@ -79,8 +79,8 @@ def main():
                         player_clicks.append(square_selected)  # append for both 1st and 2nd click
                     if len(player_clicks) == 2 and human_turn:  # after 2nd click
                         move = ChessEngine.Move(player_clicks[0], player_clicks[1], game_state.board)
-                        requiredMove = ChessEngine.Move(Utils.squareCoordsCoverter(puzzleMoveSet[сurMove][0:2]),
-                                                        Utils.squareCoordsCoverter(puzzleMoveSet[сurMove][2:4]),
+                        requiredMove = ChessEngine.Move(Utils.squareCoordsConverter(puzzleMoveSet[сurMove][0:2]),
+                                                        Utils.squareCoordsConverter(puzzleMoveSet[сurMove][2:4]),
                                                         game_state.board)  # менять первый индекс
                         if move == requiredMove:
                             game_state.makeMove(move)
@@ -118,9 +118,9 @@ def main():
 
         # AI move finder
         if not game_over and not human_turn and not move_undone:
-            ai_move = ChessEngine.Move(Utils.squareCoordsCoverter(puzzleMoveSet[сurMove][0:2]),
-                                                        Utils.squareCoordsCoverter(puzzleMoveSet[сurMove][2:4]),
-                                                        game_state.board)
+            ai_move = ChessEngine.Move(Utils.squareCoordsConverter(puzzleMoveSet[сurMove][0:2]),
+                                       Utils.squareCoordsConverter(puzzleMoveSet[сurMove][2:4]),
+                                       game_state.board)
             game_state.makeMove(ai_move)
             сurMove+=1
             move_made = True
