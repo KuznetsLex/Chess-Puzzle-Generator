@@ -16,7 +16,9 @@ def generate(puzzleOrig):
     origMoveSet = origMoveSet.split()
     moveSet = moveSet.split()
 
-    humanMoves1 = getMovesWithDifferStartPos(placement, origMoveSet[1])
+    # humanMoves1 = getMovesWithDifferStartPos(placement, origMoveSet[1])
+    humanMoves1 = Utils.getMovesToTarget(placement, origMoveSet[1][0:2], origMoveSet[1][2:4])
+    print(humanMoves1)
     humanMove1 = random.choice(humanMoves1)
     moveSet[1] = humanMove1
     placement = Utils.shiftPiece(placement, origMoveSet[1][0:2], moveSet[1][0:2])

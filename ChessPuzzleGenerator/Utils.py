@@ -16,7 +16,7 @@ def squareToCoordsConverter(square):
 
 def coordsToSquareConverter(coords):
     square = ""
-    match coords[0]:
+    match coords[1]:
         case 0: square += "a"
         case 1: square += "b"
         case 2: square += "c"
@@ -25,7 +25,7 @@ def coordsToSquareConverter(coords):
         case 5: square += "f"
         case 6: square += "g"
         case 7: square += "h"
-    square += 8 - coords[1]
+    square += str(8 - coords[0])
     return square
 
 
@@ -106,111 +106,116 @@ def revertMove(placement, move):
     return makeMove(placement, move)
 
 
-def getMovesToTarget(placement, square):
-    #дописать проверку на шах и ход конем
-    moves = []
-    figure = getPieceBySquare(placement, square)
+def getMovesToTarget(placement, startSquare, targetSquare):
+    # TODO дописать проверку на шах и ход конем
+    startSquares = []
+    placementSaved = placement
+    placement = makeMove(placement, startSquare+targetSquare)
+    figure = getPieceBySquare(placement, targetSquare)
     board = piecePlacementToBoard(placement)
-    figure_coords = squareToCoordsConverter(square)
-    match figure.lowercase():
+    figure_coords = squareToCoordsConverter(targetSquare)
+    match figure.lower():
         case 'r':
             for row in range(figure_coords[0] + 1, 8):
                 if board[row][figure_coords[1]] == '-':
-                    moves.append(square + coordsToSquareConverter((row, figure_coords[1])))
+                    startSquares.append(coordsToSquareConverter((row, figure_coords[1])))
                 else:
                     break
             for row in range(figure_coords[0] - 1, 0, -1):
                 if board[row][figure_coords[1]] == '-':
-                    moves.append(square + coordsToSquareConverter((row, figure_coords[1])))
+                    startSquares.append(coordsToSquareConverter((row, figure_coords[1])))
                 else:
                     break
             for col in range(figure_coords[1] + 1, 8):
                 if board[figure_coords[0]][col] == '-':
-                    moves.append(square + coordsToSquareConverter((figure_coords[0], col)))
+                    startSquares.append(coordsToSquareConverter((figure_coords[0], col)))
                 else:
                     break
             for col in range(figure_coords[1] - 1, 0, -1):
                 if board[figure_coords[0]][col] == '-':
-                    moves.append(square + coordsToSquareConverter((figure_coords[0], col)))
+                    startSquares.append(coordsToSquareConverter((figure_coords[0], col)))
                 else:
                     break
         case 'b':
             col = figure_coords[1] + 1
             for row in range(figure_coords[0] + 1, 8):
                 if board[row][col] == '-':
-                    moves.append(square + coordsToSquareConverter((row, col)))
+                    startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
                     break
             col = figure_coords[1] - 1
             for row in range(figure_coords[0] - 1, 0, -1):
                 if board[row][col] == '-':
-                    moves.append(square + coordsToSquareConverter((row, col)))
+                    startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
                 else:
                     break
             col = figure_coords[1] - 1
             for row in range(figure_coords[0] + 1, 8):
                 if board[row][col] == '-':
-                    moves.append(square + coordsToSquareConverter((row, col)))
+                    startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
                 else:
                     break
             col = figure_coords[1] + 1
             for row in range(figure_coords[0] - 1, 0, -1):
                 if board[row][col] == '-':
-                    moves.append(square + coordsToSquareConverter((row, col)))
+                    startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
                     break
         case 'q':
             for row in range(figure_coords[0] + 1, 8):
                 if board[row][figure_coords[1]] == '-':
-                    moves.append(square + coordsToSquareConverter((row, figure_coords[1])))
+                    startSquares.append(coordsToSquareConverter((row, figure_coords[1])))
                 else:
                     break
             for row in range(figure_coords[0] - 1, 0, -1):
                 if board[row][figure_coords[1]] == '-':
-                    moves.append(square + coordsToSquareConverter((row, figure_coords[1])))
+                    startSquares.append(coordsToSquareConverter((row, figure_coords[1])))
                 else:
                     break
             for col in range(figure_coords[1] + 1, 8):
                 if board[figure_coords[0]][col] == '-':
-                    moves.append(square + coordsToSquareConverter((figure_coords[0], col)))
+                    startSquares.append(coordsToSquareConverter((figure_coords[0], col)))
                 else:
                     break
             for col in range(figure_coords[1] - 1, 0, -1):
                 if board[figure_coords[0]][col] == '-':
-                    moves.append(square + coordsToSquareConverter((figure_coords[0], col)))
+                    startSquares.append(coordsToSquareConverter((figure_coords[0], col)))
                 else:
                     break
             col = figure_coords[1] + 1
             for row in range(figure_coords[0] + 1, 8):
                 if board[row][col] == '-':
-                    moves.append(square + coordsToSquareConverter((row, col)))
+                    startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
                     break
             col = figure_coords[1] - 1
             for row in range(figure_coords[0] - 1, 0, -1):
                 if board[row][col] == '-':
-                    moves.append(square + coordsToSquareConverter((row, col)))
+                    startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
                 else:
                     break
             col = figure_coords[1] - 1
             for row in range(figure_coords[0] + 1, 8):
                 if board[row][col] == '-':
-                    moves.append(square + coordsToSquareConverter((row, col)))
+                    startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
                 else:
                     break
             col = figure_coords[1] + 1
             for row in range(figure_coords[0] - 1, 0, -1):
                 if board[row][col] == '-':
-                    moves.append(square + coordsToSquareConverter((row, col)))
+                    startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
                     break
+    moves = []
+    for i in range(len(startSquares)):
+        moves.append(startSquares[i] + targetSquare)
     return moves
 
