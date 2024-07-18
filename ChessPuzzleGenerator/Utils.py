@@ -106,6 +106,9 @@ def revertMove(placement, move):
     return makeMove(placement, move)
 
 
+def isKingChecked(placement):
+    pass
+
 def getMovesToTarget(placement, startSquare, targetSquare):
     # TODO дописать проверку на шах и ход конем
     startSquares = []
@@ -214,6 +217,12 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                     col += 1
                 else:
                     break
+    for i in range(len(startSquares)):
+        placement = placementSaved
+        placement = shiftPiece(placement, startSquares[i], targetSquare)
+        if isKingChecked(placement):
+            startSquares.pop(i)
+
     moves = []
     for i in range(len(startSquares)):
         moves.append(startSquares[i] + targetSquare)

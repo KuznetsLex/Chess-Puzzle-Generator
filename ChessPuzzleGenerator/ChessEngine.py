@@ -7,7 +7,8 @@ from ChessPuzzleGenerator.PuzzleManager import Puzzle
 
 
 class GameState:
-    def __init__(self):
+    puzzle = []
+    def __init__(self, fen):
         """
         Board is an 8x8 2d list, each element in list has 2 characters.
         The first character represents the color of the piece: 'b' or 'w'.
@@ -15,35 +16,14 @@ class GameState:
         "--" represents an empty space with no piece.
         """
 
-        difficultyLevel = 4
-
-
-
-        #TODO получать уровень пазла извне
-        puzzleManager = Puzzle(difficultyLevel)
-
-
-        # self.puzzle = puzzleManager.parse()
-        # self.puzzle = ["WTZrK", "2br1r2/p4p2/5b1k/1p2qP2/2ppPR1p/P2P1B2/1PPQ3P/R6K b - - 0 31", "f8g8 f4h4 h6g7 d2h6"]
-        self.puzzle = ['WTZrK1', '2br1r2/p4p2/5b1k/1p2qP2/2ppP2p/P2P1B1R/1PPQ3P/R6K b', 'f8g8 h3h4 h6g7 d2h6']
-
-
-        puzzleId = self.puzzle[0]
-        print(puzzleId)
-        puzzleFen = self.puzzle[1]
-        print(puzzleFen)
-        puzzleMoveSet = self.puzzle[2]
-        print(puzzleMoveSet)
+        puzzleFen = fen
 
 
         self.board = self.fenToBoard(puzzleFen)
         self.white_to_move = puzzleFen.split()[1] == 'w'
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N": self.getKnightMoves,
                               "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
-        # self.white_to_move = True
         self.move_log = []
-        # self.white_king_location = (7, 4)
-        # self.black_king_location = (0, 4)
         self.white_king_location = self.getWhiteKingLocation(self.board)
         self.black_king_location = self.getBlackKingLocation(self.board)
         self.checkmate = False
@@ -111,10 +91,6 @@ class GameState:
 
         # pawn promotion
         if move.is_pawn_promotion:
-            # if not is_AI:
-            #    promoted_piece = input("Promote to Q, R, B, or N:") #take this to UI later
-            #    self.board[move.end_row][move.end_col] = move.piece_moved[0] + promoted_piece
-            # else:
             self.board[move.end_row][move.end_col] = move.piece_moved[0] + "Q"
 
         # enpassant move
@@ -262,10 +238,6 @@ class GameState:
                 self.getKingMoves(king_row, king_col, moves)
         else:  # not in check - all moves are fine
             moves = self.getAllPossibleMoves()
-            # if self.white_to_move:
-            #     self.getCastleMoves(self.white_king_location[0], self.white_king_location[1], moves)
-            # else:
-            #     self.getCastleMoves(self.black_king_location[0], self.black_king_location[1], moves)
 
         if len(moves) == 0:
             if self.inCheck():
@@ -584,30 +556,6 @@ class GameState:
                         self.white_king_location = (row, col)
                     else:
                         self.black_king_location = (row, col)
-
-    # def getCastleMoves(self, row, col, moves):
-    #     """
-    #     Generate all valid castle moves for the king at (row, col) and add them to the list of moves.
-    #     """
-    #     if self.squareUnderAttack(row, col):
-    #         return  # can't castle while in check
-    #     if (self.white_to_move and self.current_castling_rights.wks) or (
-    #             not self.white_to_move and self.current_castling_rights.bks):
-    #         self.getKingsideCastleMoves(row, col, moves)
-    #     if (self.white_to_move and self.current_castling_rights.wqs) or (
-    #             not self.white_to_move and self.current_castling_rights.bqs):
-    #         self.getQueensideCastleMoves(row, col, moves)
-
-    # def getKingsideCastleMoves(self, row, col, moves):
-    #     if self.board[row][col + 1] == '--' and self.board[row][col + 2] == '--':
-    #         if not self.squareUnderAttack(row, col + 1) and not self.squareUnderAttack(row, col + 2):
-    #             moves.append(Move((row, col), (row, col + 2), self.board, is_castle_move=True))
-
-    # def getQueensideCastleMoves(self, row, col, moves):
-    #     if self.board[row][col - 1] == '--' and self.board[row][col - 2] == '--' and self.board[row][col - 3] == '--':
-    #         if not self.squareUnderAttack(row, col - 1) and not self.squareUnderAttack(row, col - 2):
-    #             moves.append(Move((row, col), (row, col - 2), self.board, is_castle_move=True))
-
 
 class CastleRights:
     def __init__(self, wks, bks, wqs, bqs):

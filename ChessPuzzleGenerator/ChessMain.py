@@ -7,7 +7,6 @@ import pygame as p
 import ChessEngine
 import Utils
 import sys
-from multiprocessing import Process, Queue
 
 BOARD_WIDTH = BOARD_HEIGHT = 512
 MOVE_LOG_PANEL_WIDTH = 250
@@ -28,7 +27,7 @@ def loadImages():
         IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE))
 
 
-def main():
+def main(puzzle):
 
 
     """
@@ -39,7 +38,7 @@ def main():
     screen = p.display.set_mode((BOARD_WIDTH + MOVE_LOG_PANEL_WIDTH, BOARD_HEIGHT))
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
-    game_state = ChessEngine.GameState()
+    game_state = ChessEngine.GameState(puzzle[1])
     valid_moves = game_state.getValidMoves()
     move_made = True  # flag variable for when a move is made TODO
     animate = False  # flag variable for when we should animate a move
@@ -57,7 +56,7 @@ def main():
     player_one = not game_state.white_to_move
     player_two = not player_one
     сurMove = 0
-    puzzleMoveSet = game_state.puzzle[2].split()
+    puzzleMoveSet = puzzle[2].split()
     while running:
         human_turn = (game_state.white_to_move and player_one) or (not game_state.white_to_move and player_two)
         for e in p.event.get():
@@ -103,7 +102,7 @@ def main():
                     move_undone = True
 
                 if e.key == p.K_r:  # get new random puzzle when 'r' is pressed
-                    game_state = ChessEngine.GameState()
+                    game_state = ChessEngine.GameState(puzzle[1])
                     valid_moves = game_state.getValidMoves()
                     square_selected = ()
                     player_clicks = []
@@ -284,4 +283,11 @@ def animateMove(move, screen, board, clock):
 
 
 if __name__ == "__main__":
-    main()
+    main(['9Ozv3', 'rkbRr3/pp5p/8/2Q2Nq1/4P3/8/PPP4p/5R1K b', 'e8d8 c5e5 d8d6 e5d6'])
+
+
+'''
+['9Ozv3', 'rkbRr3/pp5p/8/3Q1Nq1/4P3/8/PPP4p/5R1K b - - 2 23', 'e8d8 d5e5 d8d6 e5d6']
+['9Ozv3', 'rkbRr3/pp5p/4Q3/5Nq1/4P3/8/PPP4p/5R1K b', 'e8d8 e6e5 d8d6 e5d6']
+['9Ozv3', 'rkbRr3/pp5p/8/5Nq1/4PQ2/8/PPP4p/5R1K b', 'e8d8 f4e5 d8d6 e5d6']
+'''
