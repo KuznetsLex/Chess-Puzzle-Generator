@@ -80,3 +80,12 @@ def makeMove(placement, move):
     board[finish_coord[0]][finish_coord[1]] = figure
     newPlacement = boardToPiecePlacement(board)
     return newPlacement
+
+
+def shiftPiece(placement, startSquare, finishSquare):
+    return makeMove(placement, startSquare+finishSquare)
+
+
+def revertMove(placement, move):
+    move = move[2:4] + move[0:2]
+    return makeMove(placement, move)

@@ -24,7 +24,8 @@ class GameState:
 
 
         # self.puzzle = puzzleManager.parse()
-        self.puzzle = ["WTZrK", "2br1r2/p4p2/5b1k/1p2qP2/2ppPR1p/P2P1B2/1PPQ3P/R6K b - - 0 31", "f8g8 f4h4 h6g7 d2h6"]
+        # self.puzzle = ["WTZrK", "2br1r2/p4p2/5b1k/1p2qP2/2ppPR1p/P2P1B2/1PPQ3P/R6K b - - 0 31", "f8g8 f4h4 h6g7 d2h6"]
+        self.puzzle = ['WTZrK1', '2br1r2/p4p2/5b1k/1p2qP2/2ppP2p/P2P1B1R/1PPQ3P/R6K b', 'f8g8 h3h4 h6g7 d2h6']
 
 
         puzzleId = self.puzzle[0]

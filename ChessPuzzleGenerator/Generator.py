@@ -1,19 +1,29 @@
 from ChessPuzzleGenerator import Utils
+import random
+
+
+def getMovesWithDifferStartPos(placement, moves):
+    return ['h3h4']
 
 
 def generate(puzzleOrig):
-    # origId = puzzleOrig[0]
+    origId = puzzleOrig[0]
     origFen = puzzleOrig[1]
     origMoveSet = puzzleOrig[2]
-    origPiecePlacement = origFen.split()[0]
+    origPlacement = origFen.split()[0]
+    moveSet = origMoveSet
+    placement = origPlacement
+    origMoveSet = origMoveSet.split()
+    moveSet = moveSet.split()
 
-    newPuzzle = []
-    firstBotMove = origMoveSet.split()[0]
-    placementAfter1 = Utils.makeMove(origPiecePlacement, firstBotMove)
-
-    print(origPiecePlacement)
-    print(firstBotMove)
-    print(placementAfter1)
+    humanMoves1 = getMovesWithDifferStartPos(placement, origMoveSet[1])
+    humanMove1 = random.choice(humanMoves1)
+    moveSet[1] = humanMove1
+    placement = Utils.shiftPiece(placement, origMoveSet[1][0:2], moveSet[1][0:2])
+    moveSet = " ".join(moveSet)
+    id = origId + '1'
+    newPuzzle = [id, placement + " " + origFen.split()[1], moveSet]
+    print(newPuzzle)
     return newPuzzle
 
 
