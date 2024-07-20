@@ -61,5 +61,5 @@ def predict_user_rating(first_line_percentage, second_line_percentage, third_lin
     predicted_rating = best_model.predict(input_data_scaled)
     return predicted_rating[0]
 
-# Пример использования функции для предсказания рейтинга пользователя
+# Пример использования функции для предсказания рейтинга пользователя (comment)
 predicted_rating = predict_user_rating(75,  5,15,5)

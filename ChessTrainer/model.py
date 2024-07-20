@@ -232,6 +232,4 @@ if __name__ == "__main__":
     usernames = ['Ucitel', 'Ro_ro2', 'Ali430', 'GelioChess', 'faceofmarlboro']
     data = analyze_games(usernames, max_games=200)
     write_to_csv(data, 'chess_data.csv')
-#TODO: вынеси анализ каждого хода в отдельную функцию analyze_move, чтобы использовать это в файле playEngine
-#TODO: добавь анимацию к движению фигур
-#TODO: исправь проблему с 40 ходом
+#TODO: вынеси анализ каждого хода в отдельную функцию analyze_move, чтобы использовать это в файле Game.py

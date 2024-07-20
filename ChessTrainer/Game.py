@@ -180,7 +180,7 @@ class ChessApp:
 
         skill_level = (self.current_engine_elo - 500) // 100
         engine.configure({"Skill Level": skill_level})
-
+#функция, заканчивающая игру
     def surrender(self):
         self.status_label.config(text="You surrendered")
         self.print_statistics()
