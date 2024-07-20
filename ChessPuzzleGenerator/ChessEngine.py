@@ -3,9 +3,6 @@ Storing all the information about the current state of ChessPuzzleGenerator game
 Determining valid moves at current state.
 It will keep move log.
 """
-from ChessPuzzleGenerator.PuzzleManager import Puzzle
-
-
 class GameState:
     puzzle = []
     def __init__(self, fen):

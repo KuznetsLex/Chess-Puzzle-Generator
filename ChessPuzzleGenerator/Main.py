@@ -1,5 +1,5 @@
-from ChessPuzzleGenerator import Generator
-from ChessPuzzleGenerator.PuzzleManager import Puzzle
+import Generator
+from PuzzleManager import Puzzle
 
 
 def main():

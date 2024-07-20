@@ -1,4 +1,4 @@
-from ChessPuzzleGenerator import Utils
+import Utils
 import random
 
 def generate(puzzleOrig):

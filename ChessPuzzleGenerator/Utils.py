@@ -13,18 +13,9 @@ def squareToCoordsConverter(square):
         case 'h': col = 7
     return row, col
 
-
+num_to_letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
 def coordsToSquareConverter(coords):
-    square = ""
-    match coords[1]:
-        case 0: square += "a"
-        case 1: square += "b"
-        case 2: square += "c"
-        case 3: square += "d"
-        case 4: square += "e"
-        case 5: square += "f"
-        case 6: square += "g"
-        case 7: square += "h"
+    square = num_to_letters[coords[1]]
     square += str(8 - coords[0])
     return square
 
@@ -142,28 +133,28 @@ def getMovesToTarget(placement, startSquare, targetSquare):
         case 'b':
             col = figure_coords[1] + 1
             for row in range(figure_coords[0] + 1, 8):
-                if board[row][col] == '-':
+                if board[row][col] == '-' and col < 8:
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
                     break
             col = figure_coords[1] - 1
             for row in range(figure_coords[0] - 1, 0, -1):
-                if board[row][col] == '-':
+                if board[row][col] == '-' and col >= 0:
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
                 else:
                     break
             col = figure_coords[1] - 1
             for row in range(figure_coords[0] + 1, 8):
-                if board[row][col] == '-':
+                if board[row][col] == '-' and col >= 0:
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
                 else:
                     break
             col = figure_coords[1] + 1
             for row in range(figure_coords[0] - 1, 0, -1):
-                if board[row][col] == '-':
+                if board[row][col] == '-' and col < 8:
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
@@ -191,28 +182,28 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                     break
             col = figure_coords[1] + 1
             for row in range(figure_coords[0] + 1, 8):
-                if board[row][col] == '-':
+                if board[row][col] == '-' and col < 8:
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
                     break
             col = figure_coords[1] - 1
             for row in range(figure_coords[0] - 1, 0, -1):
-                if board[row][col] == '-':
+                if board[row][col] == '-' and col >= 0:
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
                 else:
                     break
             col = figure_coords[1] - 1
             for row in range(figure_coords[0] + 1, 8):
-                if board[row][col] == '-':
+                if board[row][col] == '-' and col >= 0:
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
                 else:
                     break
             col = figure_coords[1] + 1
             for row in range(figure_coords[0] - 1, 0, -1):
-                if board[row][col] == '-':
+                if board[row][col] == '-' and col < 8:
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
