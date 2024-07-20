@@ -1,5 +1,6 @@
 import configparser as conf
 import tkinter as tk
+from tkinter import messagebox
 
 import chess
 import chess.engine
@@ -42,29 +43,39 @@ class ChessApp:
         self.canvas = tk.Canvas(root, width=480, height=480)
         self.canvas.pack(pady=10)
 
-        self.status_label = tk.Label(root, text="Your turn", font='arial 12 bold', bg='#d9d9d9', fg='#333333')
+        self.status_label = tk.Label(root, text="Choose your side", font='arial 12 bold', bg='#d9d9d9', fg='#333333')
         self.status_label.pack(pady=5)
 
         self.rating_label = tk.Label(root, text="Predicted Rating: N/A | Engine ELO: N/A", font='arial 12 bold', bg='#d9d9d9', fg='#333333')
         self.rating_label.pack(pady=5)
 
-        self.surrender_button = tk.Button(root, text="Сдаться", command=self.surrender, font='arial 12 bold', bg='#ffcccc', fg='#333333')
+        self.surrender_button = tk.Button(root, text="Surrender", command=self.surrender, font='arial 12 bold', bg='#ffcccc', fg='#333333')
         self.surrender_button.pack(pady=10)
 
         self.canvas.bind("<Button-1>", self.click)
 
-        self.draw_board()
-
-        # Статистика ходов
         self.firstLine = 0
         self.secondLine = 0
         self.thirdLine = 0
         self.badMoves = 0
         self.totalMoves = 0
 
-        # Уровень движка
         self.current_engine_elo = 500
         self.update_engine_level()
+
+        self.side_choice_frame = tk.Frame(root, bg='#f0f0f0')
+        self.side_choice_frame.pack(pady=10)
+
+        self.white_button = tk.Button(self.side_choice_frame, text="Play as White", command=self.play_as_white, font='arial 12 bold', bg='#d9d9d9', fg='#333333')
+        self.white_button.grid(row=0, column=0, padx=10)
+
+        self.black_button = tk.Button(self.side_choice_frame, text="Play as Black", command=self.play_as_black, font='arial 12 bold', bg='#d9d9d9', fg='#333333')
+        self.black_button.grid(row=0, column=1, padx=10)
+
+        self.is_white_turn = None
+        self.player_color = None
+        self.engine_color = None
+        self.is_board_flipped = False
 
     def load_images(self):
         pieces = {
@@ -73,7 +84,7 @@ class ChessApp:
         }
         for piece, filename in pieces.items():
             self.images[piece] = ImageTk.PhotoImage(
-                Image.open(f"C:/Users/vovab/ChessTrainerNEW/ChessAI/images_GUI/{filename}") #Change path depend on yours
+                Image.open(f"C:/Users/vovab/ChessTrainerNEW/ChessAI/images_GUI/{filename}") # Change path based on yours
             )
 
     def draw_board(self):
@@ -85,7 +96,10 @@ class ChessApp:
                 y1 = rank * 60
                 x2 = x1 + 60
                 y2 = y1 + 60
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill="white" if color else "blue")
+                if self.is_board_flipped:
+                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="white" if color else "blue")
+                else:
+                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="blue" if color else "white")
                 color = not color
             color = not color
 
@@ -94,61 +108,82 @@ class ChessApp:
             if piece:
                 x = (square % 8) * 60
                 y = (7 - square // 8) * 60
+                if self.is_board_flipped:
+                    x = (7 - (square % 8)) * 60
+                    y = (square // 8) * 60
                 piece_image = self.images.get(piece.symbol())
                 if piece_image:
                     self.canvas.create_image(x, y, image=piece_image, anchor=tk.NW)
 
     def click(self, event):
+        if self.player_color is None:
+            return
+
         x = event.x // 60
         y = 7 - (event.y // 60)
+        if self.is_board_flipped:
+            x = 7 - (event.x // 60)
+            y = event.y // 60
+
         square = chess.square(x, y)
-        piece = self.board.piece_at(square)
-        if piece and piece.color == self.board.turn:
-            self.selected_square = square
-        elif hasattr(self, 'selected_square'):
-            move = chess.Move(self.selected_square, square)
-            if move in self.board.legal_moves:
-                best_move_info = engine.analyse(self.board, chess.engine.Limit(time=0.5))
-                best_move = best_move_info['pv'][0]
-                self.board.push(best_move)
-                best_move_eval = engine.analyse(self.board, chess.engine.Limit(time=0.5))['score'].relative.score(
-                    mate_score=10000) / 100.0
-                self.board.pop()
 
-                # Выполняем ход пользователя
-                self.board.push(move)
-                user_move_info = engine.analyse(self.board, chess.engine.Limit(time=0.5))
-                user_move_eval = user_move_info['score'].relative.score(mate_score=10000) / 100.0
+        if self.board.turn == self.player_color:
+            piece = self.board.piece_at(square)
+            if piece and piece.color == self.player_color:
+                self.selected_square = square
+            elif hasattr(self, 'selected_square'):
+                move = chess.Move(self.selected_square, square)
+                if move in self.board.legal_moves:
+                    self.process_user_move(move)
+                    self.after_user_move()
 
-                # Подсчет статистики
-                difference = abs(best_move_eval - user_move_eval)
-                if difference < 0.4:
-                    self.firstLine += 1
-                elif 0.4 <= difference < 0.7:
-                    self.secondLine += 1
-                elif 0.7 <= difference < 1.0:
-                    self.thirdLine += 1
-                else:
-                    self.badMoves += 1
-                self.totalMoves += 1
+    def process_user_move(self, move):
+        best_move_info = engine.analyse(self.board, chess.engine.Limit(time=0.5))
+        best_move = best_move_info['pv'][0]
+        self.board.push(best_move)
+        best_move_eval = engine.analyse(self.board, chess.engine.Limit(time=0.5))['score'].relative.score(
+            mate_score=10000) / 100.0
+        self.board.pop()
 
-                self.after_user_move()
-                self.draw_board()
-                del self.selected_square
+        # Выполняем ход пользователя
+        self.board.push(move)
+        user_move_info = engine.analyse(self.board, chess.engine.Limit(time=0.5))
+        user_move_eval = user_move_info['score'].relative.score(mate_score=10000) / 100.0
+
+        # Подсчет статистики
+        difference = abs(best_move_eval - user_move_eval)
+        if difference < 0.25:
+            self.firstLine += 1
+        elif 0.25 <= difference < 0.5:
+            self.secondLine += 1
+        elif 0.5 <= difference < 1.0:
+            self.thirdLine += 1
+        else:
+            self.badMoves += 1
+        self.totalMoves += 1
+
+        self.draw_board()
+        del self.selected_square
 
     def after_user_move(self):
         if self.board.is_checkmate():
             self.status_label.config(text="Checkmate")
             self.print_statistics()
             return
-        engine_move = engine.play(self.board, chess.engine.Limit(time=1.0)).move
-        self.board.push(engine_move)
-        self.draw_board()
 
-        if self.board.is_checkmate():
-            self.status_label.config(text="Checkmate")
-            self.print_statistics()
-            return
+        # Движок делает ход только если это не первый ход в игре
+        if self.board.turn == self.engine_color:
+            engine_move = engine.play(self.board, chess.engine.Limit(time=1.0)).move
+            self.board.push(engine_move)
+            self.draw_board()
+
+            if self.board.is_checkmate():
+                self.status_label.config(text="Checkmate")
+                self.print_statistics()
+                return
+
+        # Переключение очереди ходов
+        self.is_white_turn = not self.is_white_turn
 
         # Оценка после каждого хода
         self.evaluate_game()
@@ -168,7 +203,6 @@ class ChessApp:
         self.rating_label.config(
             text=f"Predicted Rating: {int(predicted_rating)} | Engine ELO: {self.current_engine_elo}")
 
-    # Изменение рейтинга движка после каждого хода
     def update_engine_level(self, predicted_rating=500):
         if predicted_rating < 800:
             self.current_engine_elo = 500
@@ -180,13 +214,14 @@ class ChessApp:
             self.current_engine_elo = 1800
         elif 2000 <= predicted_rating < 2400:
             self.current_engine_elo = 2200
-        else:
+        elif 2400<predicted_rating<2600:
             self.current_engine_elo = 2500
+        else:
+            self.current_engine_elo = 2900 #no young player can achieve this i guess :)
 
         skill_level = (self.current_engine_elo - 500) // 100
         engine.configure({"Skill Level": skill_level})
 
-    # функция, заканчивающая игру
     def surrender(self):
         self.status_label.config(text="You surrendered")
         self.print_statistics()
@@ -197,6 +232,25 @@ class ChessApp:
         print(f"Second Line Moves: {self.secondLine}")
         print(f"Third Line Moves: {self.thirdLine}")
         print(f"Bad Moves: {self.badMoves}")
+
+    def play_as_white(self):
+        self.player_color = chess.WHITE
+        self.engine_color = chess.BLACK
+        self.is_white_turn = True
+        self.is_board_flipped = False
+        self.side_choice_frame.pack_forget()
+        self.status_label.config(text="Your turn")
+        self.draw_board()
+
+    def play_as_black(self):
+        self.player_color = chess.BLACK
+        self.engine_color = chess.WHITE
+        self.is_white_turn = False
+        self.is_board_flipped = True
+        self.side_choice_frame.pack_forget()
+        self.status_label.config(text="Engine's turn")
+        self.draw_board()
+        self.after_user_move()
 
     def mainloop(self):
         self.root.mainloop()

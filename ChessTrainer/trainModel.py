@@ -9,14 +9,14 @@ from sklearn.metrics import mean_absolute_error
 data = pd.read_csv('chess_data.csv')
 
 
-# Проверка и заполнение NaN значений в признаках (если нужно)
+# Проверка и заполнение NaN значений в признаках
 features = data[['first_line_percentage', 'second_line_percentage', 'third_line_percentage', 'bad_moves_percentage']]
-features = features.fillna(0)
+features = features.fillna(features.median()) #заполняю Nan медианными значениями
 
 targets = data['user_rating']
 
 # Разделение данных на тренировочный и тестовый наборы
-X_train, X_test, y_train, y_test = train_test_split(features, targets, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(features, targets, test_size=0.2, random_state=42) #20% - тестовая выборка, 80% - тренировочный набор
 
 # Масштабирование данных
 scaler = StandardScaler()
@@ -33,7 +33,7 @@ param_grid = {
 
 # Поиск наилучших параметров модели
 grid_search = GridSearchCV(estimator=XGBRegressor(random_state=42), param_grid=param_grid,
-                           scoring='neg_mean_absolute_error', cv=5, n_jobs=-1)
+                           scoring='neg_mean_absolute_error', cv=5, n_jobs=-1) #поиск по минимальной величине абсолютной ошибки
 grid_search.fit(X_train_scaled, y_train)
 
 # Наилучшая модель
