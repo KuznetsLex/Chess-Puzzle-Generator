@@ -11,7 +11,7 @@ data = pd.read_csv('chess_data.csv')
 
 # Проверка и заполнение NaN значений в признаках (если нужно)
 features = data[['first_line_percentage', 'second_line_percentage', 'third_line_percentage', 'bad_moves_percentage']]
-features = features.fillna(0)  # или используйте другой метод заполнения, например, среднее значение
+features = features.fillna(0)
 
 targets = data['user_rating']
 
@@ -62,4 +62,4 @@ def predict_user_rating(first_line_percentage, second_line_percentage, third_lin
     return predicted_rating[0]
 
 # Пример использования функции для предсказания рейтинга пользователя (comment)
-predicted_rating = predict_user_rating(75,  5,15,5)
+predicted_rating = predict_user_rating(75,  5,15,5) #Predicted Rating - 1698

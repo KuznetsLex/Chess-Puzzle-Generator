@@ -1,10 +1,11 @@
+import configparser as conf
 import tkinter as tk
-from PIL import Image, ImageTk
+
 import chess
 import chess.engine
 import joblib
 import pandas as pd
-import configparser as conf
+from PIL import Image, ImageTk
 
 # Загрузка модели и scaler
 best_model = joblib.load('chess_rating_model.pkl')
@@ -32,22 +33,23 @@ def predict_user_rating(first_line_percentage, second_line_percentage, third_lin
 class ChessApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Chess Game")
+        self.root.title("ChessTrainer GMW")
+        self.root.configure(bg='#f0f0f0')  # Установка фона окна
         self.board = chess.Board()
         self.images = {}
         self.load_images()
 
         self.canvas = tk.Canvas(root, width=480, height=480)
-        self.canvas.pack()
+        self.canvas.pack(pady=10)
 
-        self.status_label = tk.Label(root, text="Your turn")
-        self.status_label.pack()
+        self.status_label = tk.Label(root, text="Your turn", font='arial 12 bold', bg='#d9d9d9', fg='#333333')
+        self.status_label.pack(pady=5)
 
-        self.rating_label = tk.Label(root, text="Predicted Rating: N/A | Engine ELO: N/A")
-        self.rating_label.pack()
+        self.rating_label = tk.Label(root, text="Predicted Rating: N/A | Engine ELO: N/A", font='arial 12 bold', bg='#d9d9d9', fg='#333333')
+        self.rating_label.pack(pady=5)
 
-        self.surrender_button = tk.Button(root, text="Сдаться", command=self.surrender)
-        self.surrender_button.pack()
+        self.surrender_button = tk.Button(root, text="Сдаться", command=self.surrender, font='arial 12 bold', bg='#ffcccc', fg='#333333')
+        self.surrender_button.pack(pady=10)
 
         self.canvas.bind("<Button-1>", self.click)
 
@@ -71,7 +73,7 @@ class ChessApp:
         }
         for piece, filename in pieces.items():
             self.images[piece] = ImageTk.PhotoImage(
-                Image.open(f"C:/Users/vovab/ChessTrainerNEW/ChessAI/images_GUI/{filename}")
+                Image.open(f"C:/Users/vovab/ChessTrainerNEW/ChessAI/images_GUI/{filename}") #Change path depend on yours
             )
 
     def draw_board(self):
@@ -83,7 +85,7 @@ class ChessApp:
                 y1 = rank * 60
                 x2 = x1 + 60
                 y2 = y1 + 60
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill="white" if color else "gray")
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill="white" if color else "blue")
                 color = not color
             color = not color
 
@@ -106,15 +108,16 @@ class ChessApp:
         elif hasattr(self, 'selected_square'):
             move = chess.Move(self.selected_square, square)
             if move in self.board.legal_moves:
-                best_move_info = engine.analyse(self.board, chess.engine.Limit(time=2.0))
+                best_move_info = engine.analyse(self.board, chess.engine.Limit(time=0.5))
                 best_move = best_move_info['pv'][0]
                 self.board.push(best_move)
-                best_move_eval = engine.analyse(self.board, chess.engine.Limit(time=2.0))['score'].relative.score(mate_score=10000) / 100.0
+                best_move_eval = engine.analyse(self.board, chess.engine.Limit(time=0.5))['score'].relative.score(
+                    mate_score=10000) / 100.0
                 self.board.pop()
 
                 # Выполняем ход пользователя
                 self.board.push(move)
-                user_move_info = engine.analyse(self.board, chess.engine.Limit(time=2.0))
+                user_move_info = engine.analyse(self.board, chess.engine.Limit(time=0.5))
                 user_move_eval = user_move_info['score'].relative.score(mate_score=10000) / 100.0
 
                 # Подсчет статистики
@@ -138,8 +141,7 @@ class ChessApp:
             self.status_label.config(text="Checkmate")
             self.print_statistics()
             return
-
-        engine_move = engine.play(self.board, chess.engine.Limit(time=2.0)).move
+        engine_move = engine.play(self.board, chess.engine.Limit(time=1.0)).move
         self.board.push(engine_move)
         self.draw_board()
 
@@ -160,10 +162,13 @@ class ChessApp:
         third_line_percentage = (self.thirdLine / self.totalMoves) * 100
         bad_moves_percentage = (self.badMoves / self.totalMoves) * 100
 
-        predicted_rating = predict_user_rating(first_line_percentage, second_line_percentage, third_line_percentage, bad_moves_percentage)
+        predicted_rating = predict_user_rating(first_line_percentage, second_line_percentage, third_line_percentage,
+                                               bad_moves_percentage)
         self.update_engine_level(predicted_rating)
-        self.rating_label.config(text=f"Predicted Rating: {int(predicted_rating)} | Engine ELO: {self.current_engine_elo}")
+        self.rating_label.config(
+            text=f"Predicted Rating: {int(predicted_rating)} | Engine ELO: {self.current_engine_elo}")
 
+    # Изменение рейтинга движка после каждого хода
     def update_engine_level(self, predicted_rating=500):
         if predicted_rating < 800:
             self.current_engine_elo = 500
@@ -180,7 +185,8 @@ class ChessApp:
 
         skill_level = (self.current_engine_elo - 500) // 100
         engine.configure({"Skill Level": skill_level})
-#функция, заканчивающая игру
+
+    # функция, заканчивающая игру
     def surrender(self):
         self.status_label.config(text="You surrendered")
         self.print_statistics()
