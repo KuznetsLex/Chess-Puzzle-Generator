@@ -1,39 +1,65 @@
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
 import joblib
+import pandas as pd
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from xgboost import XGBRegressor
+from sklearn.metrics import mean_absolute_error
 
 # Загрузка данных
 data = pd.read_csv('chess_data.csv')
 
-# Разделение на признаки и целевую переменную
-X = data[['first_line_percentage', 'second_line_percentage', 'third_line_percentage', 'bad_moves_percentage']]
-y = data['user_rating']
 
-# Разделение на обучающую и тестовую выборки
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Проверка и заполнение NaN значений в признаках (если нужно)
+features = data[['first_line_percentage', 'second_line_percentage', 'third_line_percentage', 'bad_moves_percentage']]
+features = features.fillna(0)  # или используйте другой метод заполнения, например, среднее значение
 
-# Стандартизация данных
+targets = data['user_rating']
+
+# Разделение данных на тренировочный и тестовый наборы
+X_train, X_test, y_train, y_test = train_test_split(features, targets, test_size=0.2, random_state=42)
+
+# Масштабирование данных
 scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-# Создание и обучение модели
-model = LinearRegression()
-model.fit(X_train, y_train)
+# Определение параметров для GridSearchCV
+param_grid = {
+    'n_estimators': [100, 200, 300],
+    'max_depth': [3, 5, 7],
+    'learning_rate': [0.01, 0.1, 0.2],
+    'subsample': [0.7, 0.8, 1.0],
+}
 
-# Предсказания на тестовой выборке
-y_pred = model.predict(X_test)
+# Поиск наилучших параметров модели
+grid_search = GridSearchCV(estimator=XGBRegressor(random_state=42), param_grid=param_grid,
+                           scoring='neg_mean_absolute_error', cv=5, n_jobs=-1)
+grid_search.fit(X_train_scaled, y_train)
 
-# Оценка модели
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
+# Наилучшая модель
+best_model = grid_search.best_estimator_
 
-print(f"Mean Squared Error: {mse}")
-print(f"R^2 Score: {r2}")
+# Оценка модели на тестовом наборе
+y_pred = best_model.predict(X_test_scaled)
+mae = mean_absolute_error(y_test, y_pred)
+# print(f'Mean Absolute Error: {mae}')
+# print(f'Best Parameters: {grid_search.best_params_}')
 
-# Сохранение модели и масштабировщика
-joblib.dump(model, 'chess_rating_predictor.pkl')
+# Сохранение модели и scaler
+joblib.dump(best_model, 'chess_rating_model.pkl')
 joblib.dump(scaler, 'scaler.pkl')
+
+# Функция для предсказания рейтинга пользователя
+def predict_user_rating(first_line_percentage, second_line_percentage, third_line_percentage, bad_moves_percentage):
+    input_data = pd.DataFrame({
+        'first_line_percentage': [first_line_percentage],
+        'second_line_percentage': [second_line_percentage],
+        'third_line_percentage': [third_line_percentage],
+        'bad_moves_percentage': [bad_moves_percentage]
+    })
+    input_data_scaled = scaler.transform(input_data)
+    predicted_rating = best_model.predict(input_data_scaled)
+    return predicted_rating[0]
+
+# Пример использования функции для предсказания рейтинга пользователя
+predicted_rating = predict_user_rating(75,  5,15,5)

@@ -1,13 +1,13 @@
 import csv
-
 import berserk
 import chess
 import chess.engine
 import pandas as pd
 import configparser as conf
+import time
 
 config = conf.RawConfigParser()
-config.read('./ChessTrainer/config.properties')
+config.read('./config.properties')
 
 # Инициализация API
 token = config.get("Main", "LichessToken")
@@ -15,112 +15,223 @@ session = berserk.TokenSession(token)
 client = berserk.Client(session)
 engine = chess.engine.SimpleEngine.popen_uci(config.get("Main", "EngineStr"))
 engine.configure({"Threads": 4})  # Установка числа потоков (1-32)
+def analyze_move(board, move, depth=10):
+    if move not in board.legal_moves:
+        print("Некорректный ход:", move)
+        return None
+
+    pre_move_score = evaluate_position(board)
+
+    best_move = get_best_move(board, depth)
+    board.push(best_move)
+    best_move_score = evaluate_position(board)
+    board.pop()
+
+    board.push(move)
+    post_move_score = evaluate_position(board)
+    board.pop()
+
+    score_difference = post_move_score - best_move_score
+    user_winning = (pre_move_score >= 2.5)
+    if user_winning:
+        if score_difference <= 0.4:
+            return 1
+        elif 0.4 < score_difference <= 1:
+            return 2
+        elif 1 < score_difference <= 1.5:
+            return 3
+        else:
+            return 4
+    else:
+        if score_difference <= 0.5:
+            return 1
+        elif 0.5 < score_difference <= 1:
+            return 2
+        elif score_difference > 1 and pre_move_score * 0.5 <= post_move_score:
+            return 3
+        else:
+            return 4
+
+def analyze_move_san(board, move, depth=10):
+    try:
+        move_san = board.san(move)
+        move_obj = board.parse_san(move_san)
+    except ValueError:
+        print("Некорректный ход:", move_san)
+        return None
+
+    # Оценка позиции перед ходом
+    pre_move_score = evaluate_position(board)
+
+    # Оценка лучшего хода
+    best_move = get_best_move(board, depth)
+    board.push(best_move)
+    best_move_score = evaluate_position(board)
+    board.pop()
+
+    # Выполнение и оценка текущего хода
+    board.push(move_obj)
+    post_move_score = evaluate_position(board)
+    board.pop()
+
+    score_difference = post_move_score - best_move_score
+    user_winning = (pre_move_score >= 2.5)
+
+    if user_winning:
+        if score_difference <= 0.4:
+            return 1  # Сильнейший ход
+        elif 0.4 < score_difference <= 1:
+            return 2  # Ход по второй линии
+        elif 1 < score_difference <= 1.5:
+            return 3  # Ход по третьей линии
+        else:
+            return 4  # Плохой ход
+    else:
+        if score_difference <= 0.5:
+            return 1  # Сильнейший ход
+        elif 0.5 < score_difference <= 1:
+            return 2  # Ход по второй линии
+        elif score_difference > 1 and pre_move_score * 0.5 <= post_move_score:
+            return 3  # Ход по третьей линии
+        else:
+            return 4  # Плохой ход
+
 
 def write_to_csv(data, filename):
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(data.columns)  # Запись заголовков столбцов
+        writer.writerow(data.columns)
         for index, row in data.iterrows():
             writer.writerow(row)
+
 def evaluate_position(board, depth=10):
     info = engine.analyse(board, chess.engine.Limit(depth=depth))
-    # Получение оценки позиции
-    return info['score'].relative.score(mate_score=10000) / 100  # Преобразование
+    return info['score'].relative.score(mate_score=10000) / 100  # SantiPawns to pawns
+
 def get_best_move(board, depth=10):
     result = engine.play(board, chess.engine.Limit(depth=depth))
     return result.move
-def analyze_games(usernames, max_games=10):
+def analyze_games(usernames, max_games):
     data = []
     for username in usernames:
-        games = client.games.export_by_player(username, max=max_games)
+        attempts = 3
+        while attempts > 0:
+            try:
+                games = client.games.export_by_player(username, max=max_games)
+                break
+            except Exception as e:
+                attempts -= 1
+                print(f"Error fetching games for {username}, attempts left: {attempts}. Error: {e}")
+                time.sleep(5)
+                if attempts == 0:
+                    continue
 
         for game in games:
-            white_rating = game['players']['white']['rating']
-            black_rating = game['players']['black']['rating']
-            moves = game['moves'].split()
+            try:
+                white_rating = game['players']['white']['rating']
+                black_rating = game['players']['black']['rating']
+                moves = game['moves'].split()
 
-            player_color = 'white' if game['players']['white']['user']['name'].lower() == username.lower() else 'black'
-            player_rating = white_rating if player_color == 'white' else black_rating
-            board = chess.Board()
+                player_color = 'white' if game['players']['white']['user']['name'].lower() == username.lower() else 'black'
+                player_rating = white_rating if player_color == 'white' else black_rating
+                board = chess.Board()
 
-            # Переменные для хранения данных
-            first_line_moves = 0
-            second_line_moves = 0
-            third_line_moves = 0
-            bad_moves = 0
-            total_moves = 0
+                # Переменные для хранения данных
+                first_line_moves = 0
+                second_line_moves = 0
+                third_line_moves = 0
+                bad_moves = 0
+                total_moves = 0
 
-            # Анализируем все ходы
-            for move_index, move_san in enumerate(moves):
-                is_users_move = (player_color == 'white' and move_index % 2 == 0) or (
-                    player_color == 'black' and move_index % 2 != 0)
+                for move_index, move_san in enumerate(moves):
+                    is_users_move = (player_color == 'white' and move_index % 2 == 0) or (
+                            player_color == 'black' and move_index % 2 != 0)
 
-                if not is_users_move:
-                    board.push_san(move_san)
-                    continue
+                    if not is_users_move:
+                        board.push_san(move_san)
+                        continue
 
-                try:
-                    move_obj = board.parse_san(move_san)
-                except ValueError:
-                    continue
+                    try:
+                        move_obj = board.parse_san(move_san)
+                    except ValueError:
+                        continue
 
-                legal_moves = list(board.legal_moves)
+                    legal_moves = list(board.legal_moves)
 
-                if move_obj in legal_moves:
-                    # Оценка позиции перед ходом
-                    pre_move_score = evaluate_position(board)
+                    if move_obj in legal_moves:
+                        # Оценка позиции перед ходом
+                        pre_move_score = evaluate_position(board)
 
-                    # Оценка лучшего хода
-                    best_move = get_best_move(board, depth=10)
-                    board.push(best_move)
-                    best_move_score = evaluate_position(board)
-                    board.pop()
+                        # Оценка лучшего хода
+                        best_move = get_best_move(board, depth=10)
+                        board.push(best_move)
+                        best_move_score = evaluate_position(board)
+                        board.pop()
 
-                    board.push(move_obj)
-                    post_move_score = evaluate_position(board)
+                        board.push(move_obj)
+                        post_move_score = evaluate_position(board)
 
-                    score_difference = post_move_score - best_move_score
-                    if move_index < 10:
-                        if score_difference <= 0.5:
-                            first_line_moves += 1
-                        elif 0.5 < score_difference <= 1:
-                            second_line_moves += 1
-                        elif 1 < score_difference <= 2:
-                            third_line_moves += 1
+                        score_difference = post_move_score - best_move_score
+                        user_winning = (pre_move_score >= 2.5)
+
+                        if user_winning:
+                            if score_difference<=0.4:
+                                first_line_moves+=1
+                            elif 0.4<score_difference <= 1:
+                                second_line_moves += 1
+                            elif 1<score_difference <= 1.5:
+                                third_line_moves += 1
+                            else:
+                                bad_moves += 1
                         else:
-                            bad_moves += 1
-                    else:
-                        if score_difference <= 0.5:
-                            first_line_moves += 1
-                        elif 0.5 < score_difference <= 1:
-                            second_line_moves += 1
-                        elif score_difference > 1 and pre_move_score * 0.5 <= post_move_score:
-                            third_line_moves += 1
-                        else:
-                            bad_moves += 1
+                            if move_index < 10:
+                                if score_difference <= 0.5:
+                                    first_line_moves += 1
+                                elif 0.5 < score_difference <= 1:
+                                    second_line_moves += 1
+                                elif 1 < score_difference <= 2:
+                                    third_line_moves += 1
+                                else:
+                                    bad_moves += 1
+                            else:
+                                if score_difference <= 0.5:
+                                    first_line_moves += 1
+                                elif 0.5 < score_difference <= 1:
+                                    second_line_moves += 1
+                                elif score_difference > 1 and pre_move_score * 0.5 <= post_move_score:
+                                    third_line_moves += 1
+                                else:
+                                    bad_moves += 1
 
-                    total_moves += 1
+                        total_moves += 1
 
-                    board.pop()  # Отменяем ход для анализа следующего хода
+                        board.pop()  # Отменяем ход для анализа следующего хода
 
-                board.push_san(move_san)  # Восстанавливаем исходное состояние доски
+                    board.push_san(move_san)  # Восстанавливаем исходное состояние доски
 
-            if total_moves > 0:
-                data.append({
-                    'username': username,
-                    'user_rating': player_rating,
-                    'first_line_percentage': format(first_line_moves / total_moves * 100, '.2f'),
-                    'second_line_percentage': format(second_line_moves / total_moves * 100, '.2f'),
-                    'third_line_percentage': format(third_line_moves / total_moves * 100, '.2f'),
-                    'bad_moves_percentage': format(bad_moves / total_moves * 100, '.2f')
-                })
+                if total_moves > 0:
+                    data.append({
+                        'username': username,
+                        'user_rating': player_rating,
+                        'first_line_percentage': format(first_line_moves / total_moves * 100, '.2f'),
+                        'second_line_percentage': format(second_line_moves / total_moves * 100, '.2f'),
+                        'third_line_percentage': format(third_line_moves / total_moves * 100, '.2f'),
+                        'bad_moves_percentage': format(bad_moves / total_moves * 100, '.2f')
+                    })
+                    print("game analyzed")
 
-    # Завершение работы движка
+            except Exception as e:
+                print(f"Error analyzing game for {username}: {e}")
+                continue
+
     engine.quit()
 
     return pd.DataFrame(data)
 
 if __name__ == "__main__":
-    usernames = ['Ro_ro2', 'Ali430','GelioChess', 'faceofmarlboro', 'kolosok2008']
-    data = analyze_games(usernames, max_games=10)
+    usernames = ['Ucitel', 'Ro_ro2', 'Ali430', 'GelioChess', 'faceofmarlboro']
+    data = analyze_games(usernames, max_games=200)
     write_to_csv(data, 'chess_data.csv')
+#TODO: вынеси анализ каждого хода в отдельную функцию analyze_move, чтобы использовать это в файле playEngine
+#TODO: добавь анимацию к движению фигур
+#TODO: исправь проблему с 40 ходом
