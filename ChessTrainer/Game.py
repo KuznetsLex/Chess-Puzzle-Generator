@@ -1,6 +1,5 @@
 import configparser as conf
 import tkinter as tk
-from tkinter import messagebox
 
 import chess
 import chess.engine
@@ -20,6 +19,7 @@ engine_path = config.get("Main", "EngineStr")
 # Инициализация движка
 engine = chess.engine.SimpleEngine.popen_uci(engine_path)
 
+
 def predict_user_rating(first_line_percentage, second_line_percentage, third_line_percentage, bad_moves_percentage):
     input_data = pd.DataFrame({
         'first_line_percentage': [first_line_percentage],
@@ -30,6 +30,7 @@ def predict_user_rating(first_line_percentage, second_line_percentage, third_lin
     input_data_scaled = scaler.transform(input_data)
     predicted_rating = best_model.predict(input_data_scaled)
     return predicted_rating[0]
+
 
 class ChessApp:
     def __init__(self, root):
@@ -46,10 +47,12 @@ class ChessApp:
         self.status_label = tk.Label(root, text="Choose your side", font='arial 12 bold', bg='#d9d9d9', fg='#333333')
         self.status_label.pack(pady=5)
 
-        self.rating_label = tk.Label(root, text="Predicted Rating: N/A | Engine ELO: N/A", font='arial 12 bold', bg='#d9d9d9', fg='#333333')
+        self.rating_label = tk.Label(root, text="Predicted Rating: N/A | Engine ELO: N/A", font='arial 12 bold',
+                                     bg='#d9d9d9', fg='#333333')
         self.rating_label.pack(pady=5)
 
-        self.surrender_button = tk.Button(root, text="Surrender", command=self.surrender, font='arial 12 bold', bg='#ffcccc', fg='#333333')
+        self.surrender_button = tk.Button(root, text="Surrender", command=self.surrender, font='arial 12 bold',
+                                          bg='#ffcccc', fg='#333333')
         self.surrender_button.pack(pady=10)
 
         self.canvas.bind("<Button-1>", self.click)
@@ -66,10 +69,12 @@ class ChessApp:
         self.side_choice_frame = tk.Frame(root, bg='#f0f0f0')
         self.side_choice_frame.pack(pady=10)
 
-        self.white_button = tk.Button(self.side_choice_frame, text="Play as White", command=self.play_as_white, font='arial 12 bold', bg='#d9d9d9', fg='#333333')
+        self.white_button = tk.Button(self.side_choice_frame, text="Play as White", command=self.play_as_white,
+                                      font='arial 12 bold', bg='#d9d9d9', fg='#333333')
         self.white_button.grid(row=0, column=0, padx=10)
 
-        self.black_button = tk.Button(self.side_choice_frame, text="Play as Black", command=self.play_as_black, font='arial 12 bold', bg='#d9d9d9', fg='#333333')
+        self.black_button = tk.Button(self.side_choice_frame, text="Play as Black", command=self.play_as_black,
+                                      font='arial 12 bold', bg='#d9d9d9', fg='#333333')
         self.black_button.grid(row=0, column=1, padx=10)
 
         self.is_white_turn = None
@@ -84,7 +89,8 @@ class ChessApp:
         }
         for piece, filename in pieces.items():
             self.images[piece] = ImageTk.PhotoImage(
-                Image.open(f"C:/Users/vovab/ChessTrainerNEW/ChessAI/images_GUI/{filename}") # Change path based on yours
+                Image.open(f"C:/Users/vovab/ChessTrainerNEW/ChessAI/images_GUI/{filename}")
+                # Change path based on yours
             )
 
     def draw_board(self):
@@ -214,10 +220,10 @@ class ChessApp:
             self.current_engine_elo = 1800
         elif 2000 <= predicted_rating < 2400:
             self.current_engine_elo = 2200
-        elif 2400<predicted_rating<2600:
+        elif 2400 < predicted_rating < 2600:
             self.current_engine_elo = 2500
         else:
-            self.current_engine_elo = 2900 #no young player can achieve this i guess :)
+            self.current_engine_elo = 2900  # no young player can achieve this i guess :)
 
         skill_level = (self.current_engine_elo - 500) // 100
         engine.configure({"Skill Level": skill_level})
@@ -254,6 +260,7 @@ class ChessApp:
 
     def mainloop(self):
         self.root.mainloop()
+
 
 if __name__ == "__main__":
     root = tk.Tk()

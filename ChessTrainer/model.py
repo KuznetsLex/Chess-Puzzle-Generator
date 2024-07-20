@@ -1,10 +1,11 @@
+import configparser as conf
 import csv
+import time
+
 import berserk
 import chess
 import chess.engine
 import pandas as pd
-import configparser as conf
-import time
 
 config = conf.RawConfigParser()
 config.read('./config.properties')
@@ -16,6 +17,7 @@ client = berserk.Client(session)
 engine = chess.engine.SimpleEngine.popen_uci(config.get("Main", "EngineStr"))
 engine.configure({"Threads": 4})  # Установка числа потоков (1-32)
 
+
 def write_to_csv(data, filename):
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -23,14 +25,19 @@ def write_to_csv(data, filename):
         for index, row in data.iterrows():
             writer.writerow(row)
 
+
 def evaluate_position(board, depth=10):
     info = engine.analyse(board, chess.engine.Limit(depth=depth))
     return info['score'].relative.score(mate_score=10000) / 100  # SantiPawns to pawns
 
+
 def get_best_move(board, depth=10):
     result = engine.play(board, chess.engine.Limit(depth=depth))
     return result.move
+
+
 def analyze_games(usernames, max_games):
+    global games
     data = []
     for username in usernames:
         attempts = 3
@@ -51,7 +58,8 @@ def analyze_games(usernames, max_games):
                 black_rating = game['players']['black']['rating']
                 moves = game['moves'].split()
 
-                player_color = 'white' if game['players']['white']['user']['name'].lower() == username.lower() else 'black'
+                player_color = 'white' if game['players']['white']['user'][
+                                              'name'].lower() == username.lower() else 'black'
                 player_rating = white_rating if player_color == 'white' else black_rating
                 board = chess.Board()
 
@@ -94,11 +102,11 @@ def analyze_games(usernames, max_games):
                         user_winning = (pre_move_score >= 2.5)
 
                         if user_winning:
-                            if score_difference<=0.4:
-                                first_line_moves+=1
-                            elif 0.4<score_difference <= 1:
+                            if score_difference <= 0.4:
+                                first_line_moves += 1
+                            elif 0.4 < score_difference <= 1:
                                 second_line_moves += 1
-                            elif 1<score_difference <= 1.5:
+                            elif 1 < score_difference <= 1.5:
                                 third_line_moves += 1
                             else:
                                 bad_moves += 1
@@ -146,6 +154,7 @@ def analyze_games(usernames, max_games):
     engine.quit()
 
     return pd.DataFrame(data)
+
 
 if __name__ == "__main__":
     usernames = ['Ucitel', 'Ro_ro2', 'Ali430', 'GelioChess', 'faceofmarlboro']
