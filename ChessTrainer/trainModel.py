@@ -65,4 +65,5 @@ def predict_user_rating(first_line_percentage, second_line_percentage, third_lin
 
 
 # Пример использования функции для предсказания рейтинга пользователя (comment)
-predicted_rating = predict_user_rating(75, 5, 15, 5)  # Predicted Rating - 1698
+predicted_rating = predict_user_rating(90.62,1.56,0.00,7.81)  # Predicted Rating - 1698
+print('Примерный рейтинг пользователя: ', predicted_rating)

@@ -102,9 +102,9 @@ def analyze_games(usernames, max_games):
                         user_winning = (pre_move_score >= 2.5)
 
                         if user_winning:
-                            if score_difference <= 0.4:
+                            if score_difference <= 0.6:
                                 first_line_moves += 1
-                            elif 0.4 < score_difference <= 1:
+                            elif 0.6 < score_difference <= 1:
                                 second_line_moves += 1
                             elif 1 < score_difference <= 1.5:
                                 third_line_moves += 1

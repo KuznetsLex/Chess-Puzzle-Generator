@@ -95,31 +95,46 @@ class ChessApp:
 
     def draw_board(self):
         self.canvas.delete("all")
-        color = True
         for rank in range(8):
             for file in range(8):
                 x1 = file * 60
                 y1 = rank * 60
                 x2 = x1 + 60
                 y2 = y1 + 60
-                if self.is_board_flipped:
-                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="white" if color else "blue")
-                else:
-                    self.canvas.create_rectangle(x1, y1, x2, y2, fill="blue" if color else "white")
-                color = not color
-            color = not color
+                color = "white" if (rank + file) % 2 == 0 else "blue"
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill=color)
 
         for square in chess.SQUARES:
             piece = self.board.piece_at(square)
             if piece:
-                x = (square % 8) * 60
-                y = (7 - square // 8) * 60
-                if self.is_board_flipped:
-                    x = (7 - (square % 8)) * 60
-                    y = (square // 8) * 60
+                file = square % 8
+                rank = square // 8
+                if self.player_color == chess.WHITE:
+                    x = file * 60
+                    y = (7 - rank) * 60
+                else:
+                    x = (7 - file) * 60
+                    y = rank * 60
                 piece_image = self.images.get(piece.symbol())
                 if piece_image:
                     self.canvas.create_image(x, y, image=piece_image, anchor=tk.NW)
+
+    def play_as_white(self):
+        self.player_color = chess.WHITE
+        self.engine_color = chess.BLACK
+        self.is_white_turn = True
+        self.side_choice_frame.pack_forget()
+        self.status_label.config(text="Your turn")
+        self.draw_board()
+
+    def play_as_black(self):
+        self.player_color = chess.BLACK
+        self.engine_color = chess.WHITE
+        self.is_white_turn = False
+        self.side_choice_frame.pack_forget()
+        self.status_label.config(text="Engine's turn")
+        self.draw_board()
+        self.after_user_move()
 
     def click(self, event):
         if self.player_color is None:
@@ -239,24 +254,6 @@ class ChessApp:
         print(f"Third Line Moves: {self.thirdLine}")
         print(f"Bad Moves: {self.badMoves}")
 
-    def play_as_white(self):
-        self.player_color = chess.WHITE
-        self.engine_color = chess.BLACK
-        self.is_white_turn = True
-        self.is_board_flipped = False
-        self.side_choice_frame.pack_forget()
-        self.status_label.config(text="Your turn")
-        self.draw_board()
-
-    def play_as_black(self):
-        self.player_color = chess.BLACK
-        self.engine_color = chess.WHITE
-        self.is_white_turn = False
-        self.is_board_flipped = True
-        self.side_choice_frame.pack_forget()
-        self.status_label.config(text="Engine's turn")
-        self.draw_board()
-        self.after_user_move()
 
     def mainloop(self):
         self.root.mainloop()
