@@ -1,4 +1,4 @@
-import Generator
+import Generator, ChessMain
 from PuzzleManager import Puzzle
 
 
@@ -18,6 +18,7 @@ def main():
     f.write(str(puzzle_orig) + "\n" + "\n".join(generated_puzzles))
     f.close()
 
+    ChessMain.main(puzzle_orig)
 
 if __name__ == "__main__":
     main()
