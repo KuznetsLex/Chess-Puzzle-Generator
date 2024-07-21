@@ -97,17 +97,18 @@ def revertMove(placement, move):
     return makeMove(placement, move)
 
 
-def isKingChecked(placement):
+def isKingChecked(placement, color):
     pass
 
 def getMovesToTarget(placement, startSquare, targetSquare):
-    # TODO дописать проверку на шах и ход конем
+    # TODO дописать проверку на шах
     startSquares = []
     placementSaved = placement
     placement = makeMove(placement, startSquare+targetSquare)
     piece = getPieceBySquare(placement, targetSquare)
     board = piecePlacementToBoard(placement)
     piece_coords = squareToCoordsConverter(targetSquare)
+    enemyKingColor = "w" if piece.islower() else "b"
     match piece.lower():
         case 'r':
             for row in range(piece_coords[0] + 1, 8):
@@ -203,7 +204,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                     break
             col = piece_coords[1] + 1
             for row in range(piece_coords[0] - 1, 0, -1):
-                if  col < 8 and board[row][col] == '-':
+                if col < 8 and board[row][col] == '-':
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
                 else:
@@ -246,7 +247,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
     for i in range(len(startSquares)):
         placement = placementSaved
         placement = shiftPiece(placement, startSquares[i], targetSquare)
-        if isKingChecked(placement):
+        if isKingChecked(placement, enemyKingColor):
             startSquares.pop(i)
 
     moves = []
@@ -254,3 +255,26 @@ def getMovesToTarget(placement, startSquare, targetSquare):
         moves.append(startSquares[i] + targetSquare)
     return moves
 
+
+def getPossiblePieces(placement, square):
+    piece = getPieceBySquare(placement, square)
+    savedPlacement = placement
+    possiblePieces = [piece]
+    enemyKingColor = "w" if piece.islower() else "b"
+    piece.lower()
+    if piece == 'b' or piece == 'r':
+        newPiece = 'q' if enemyKingColor == 'w' else 'Q'
+        placement = spawnPiece(placement, square, newPiece)
+        if isKingChecked(savedPlacement, enemyKingColor) and isKingChecked(placement,
+                                                                           enemyKingColor) or not isKingChecked(
+                savedPlacement, enemyKingColor) and not isKingChecked(placement, enemyKingColor):
+            possiblePieces.append(newPiece)
+    return possiblePieces
+
+
+def spawnPiece(placement, square, piece):
+    coords = squareToCoordsConverter(square)
+    board = piecePlacementToBoard(placement)
+    board[coords[0]][coords[1]] = piece
+    placement = boardToPiecePlacement(board)
+    return placement

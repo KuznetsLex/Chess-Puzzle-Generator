@@ -15,6 +15,12 @@ def generate(puzzleOrig):
     humanMove1 = random.choice(humanMoves1)
     moveSet[1] = humanMove1
     placement = Utils.shiftPiece(placement, origMoveSet[1][0:2], moveSet[1][0:2])
+
+    possiblePieces1 = Utils.getPossiblePieces(placement, moveSet[1][0:2])
+    # print(possiblePieces1)
+    humanPiece1 = random.choice(possiblePieces1)
+    placement = Utils.spawnPiece(placement, moveSet[1][0:2], humanPiece1)
+
     moveSet = " ".join(moveSet)
     id = origId
     newPuzzle = [id, placement + " " + origFen.split()[1], moveSet]

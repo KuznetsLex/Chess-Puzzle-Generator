@@ -4,7 +4,7 @@ from PuzzleManager import Puzzle
 
 def main():
     difficulty_level = 4  # выбираем уровень сложности (1-8)
-    number_of_puzzles_to_generate = 2  # выбираем количество задач
+    number_of_puzzles_to_generate = 5  # выбираем количество задач
 
     # извлекаем случайную задачу
     puzzle_manager = Puzzle(difficulty_level)
