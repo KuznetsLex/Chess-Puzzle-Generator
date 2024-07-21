@@ -1,3 +1,3 @@
-['t0bsz', '6k1/1pR3p1/p6p/4r3/4P3/5r2/PPP4P/3R2K1 w - - 0 22', 'd1d7 e5g5 g1h1 f3f1']
-['t0bsz', '6k1/1pR3p1/p6p/2r5/4P3/5r2/PPP4P/3R2K1 w', 'd1d7 c5g5 g1h1 f3f1']
-['t0bsz', '6k1/1pR3p1/p6p/4r3/4P3/5r2/PPP4P/3R2K1 w', 'd1d7 e5g5 g1h1 f3f1']
+['0zh0y', '1k4r1/p3R3/1ppp4/8/3q4/3N3P/1P3r1K/R2Q4 w - - 3 30', 'd3f2 d4f2 h2h1 f2g2']
+['0zh0y', '1k4r1/p3R3/1ppp4/8/5q2/3N3P/1P3r1K/R2Q4 w', 'd3f2 f4f2 h2h1 f2g2']
+['0zh0y', '1k4r1/p3R3/1ppp4/8/8/3N3P/1P3rqK/R2Q4 w', 'd3f2 g2f2 h2h1 f2g2']

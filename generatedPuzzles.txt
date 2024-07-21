@@ -1,3 +1,0 @@
-['5x2LA', 'R7/5ppk/2p3r1/4P2p/1p5r/1N3QP1/2q2P2/5RK1 w - - 0 37', 'f3f7 g6g3 f2g3 c2h2']
-['5x2LA', 'R7/5ppk/2p5/4P2p/1p5r/1N3QP1/2q2Pr1/5RK1 w', 'f3f7 g2g3 f2g3 c2h2']
-['5x2LA', 'R7/5ppk/2p5/4P2p/1p4rr/1N3QP1/2q2P2/5RK1 w', 'f3f7 g4g3 f2g3 c2h2']
