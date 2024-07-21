@@ -2,7 +2,7 @@ import pandas as pd
 import random as rnd
 
 class Puzzle:
-    df_mateIn2 = pd.read_csv('./ChessPuzzleGenerator/mateIn2.csv', index_col=0)
+    df_mateIn2 = pd.read_csv('mateIn2.csv', index_col=0)
     ranges = [None] * 9
     ranges[1] = [0, df_mateIn2.loc[df_mateIn2['Rating'] <= 499].index[-1]]
     ranges[2] = [df_mateIn2.loc[df_mateIn2['Rating'] >= 500].index[0], df_mateIn2.loc[df_mateIn2['Rating'] <= 799].index[-1]]

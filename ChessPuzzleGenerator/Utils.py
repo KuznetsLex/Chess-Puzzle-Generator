@@ -97,8 +97,177 @@ def revertMove(placement, move):
     return makeMove(placement, move)
 
 
-def isKingChecked(placement):
-    pass
+def getWhiteKingLocation(board):
+    for i in range (8):
+        for j in range(8):
+            if board[i][j] == 'K':
+                return (i,j)
+
+def getBlackKingLocation(board):
+    for i in range (8):
+        for j in range(8):
+            if board[i][j] == 'k':
+                return (i,j)
+
+def squareUnderAttack(placement, row, col):
+    board = piecePlacementToBoard(placement)
+    if board[row][col].islower():
+        #проверяем на атаку пешкой слева
+        if row < 7 and col > 1 and board[row + 1][col - 1] == 'P':
+            return True
+        #проверяем на атаку пешкой справа
+        if row < 7 and col < 7 and board[row + 1][col + 1] == 'P':
+            return True
+        #проверяем на атаку по вертикали и горизонтали
+        for row_ in range(row + 1, 8):
+            if board[row_][col] == 'R' or board[row_][col] == 'Q':
+                return True
+            elif board[row_][col] != '-':
+                break
+        for row_ in range(row - 1, 0, -1):
+            if board[row_][col] == 'R' or board[row_][col] == 'Q':
+                return True
+            elif board[row_][col] != '-':
+                break
+        for col_ in range(col + 1, 8):
+            if board[row][col_] == 'R' or board[row][col_] == 'Q':
+                return True
+            elif board[row][col_] != '-':
+                break
+        for col_ in range(col - 1, 0, -1):
+            if board[row][col_] == 'R' or board[row][col_] == 'Q':
+                return True
+            elif board[row][col_] != '-':
+                break
+        #проверяем на атаку по диагоналям
+        col_ = col + 1
+        for row_ in range(row + 1, 8):
+            if col_ < 8 and (board[row_][col_] == 'B' or board[row_][col_] == 'Q'):
+                return True
+            elif board[row_][col_] != '-':
+                break
+            col_ += 1
+        col_ = col - 1
+        for row_ in range(row - 1, 0, -1):
+            if col_ >= 0 and (board[row_][col_] == 'B' or board[row_][col_] == 'Q'):
+                return True
+            elif board[row_][col_] != '-':
+                break
+            col -= 1
+        col_ = col - 1
+        for row_ in range(row + 1, 8):
+            if col_ >= 0 and (board[row_][col_] == 'B' or board[row_][col_] == 'Q'):
+                return True
+            elif board[row_][col_] != '-':
+                break
+            col_ -= 1
+        col_ = col + 1
+        for row_ in range(row - 1, 0, -1):
+            if col_ < 8 and (board[row_][col_] == 'B' or board[row_][col_] == 'Q'):
+                return True
+            elif board[row_][col_] != '-':
+                break
+            col_ += 1
+        #проверяем на атаку конём
+        if row <= 6 and col <= 5 and board[row + 1][col + 2] == 'N':
+            return True
+        if row <= 6 and col >= 2 and board[row + 1][col - 2] == 'N':
+            return True
+        if row <= 5 and col >= 1 and board[row + 2][col - 1] == 'N':
+            return True
+        if row <= 5 and col <= 6 and board[row + 2][col + 1] == 'N':
+            return True
+        if row >= 2 and col <= 6 and board[row - 2][col + 1] == 'N':
+            return True
+        if row >= 2 and col >= 1 and board[row - 2][col - 1] == 'N':
+            return True
+        if row >= 1 and col >= 2 and board[row - 1][col - 2] == 'N':
+            return True
+        if row >= 1 and col <= 5 and board[row - 1][col + 2] == 'N':
+            return True
+        return False
+    if board[row][col].isupper():
+        # проверяем на атаку пешкой слева
+        if row > 1 and col > 1 and board[row - 1][col - 1] == 'p':
+            return True
+        # проверяем на атаку пешкой справа
+        if row > 1 and col < 7 and board[row - 1][col + 1] == 'p':
+            return True
+        # проверяем на атаку по вертикали и горизонтали
+        for row_ in range(row + 1, 8):
+            if board[row_][col] == 'r' or board[row_][col] == 'q':
+                return True
+            elif board[row_][col] != '-':
+                break
+        for row_ in range(row - 1, 0, -1):
+            if board[row_][col] == 'r' or board[row_][col] == 'q':
+                return True
+            elif board[row_][col] != '-':
+                break
+        for col_ in range(col + 1, 8):
+            if board[row][col_] == 'r' or board[row][col_] == 'q':
+                return True
+            elif board[row][col_] != '-':
+                break
+        for col_ in range(col - 1, 0, -1):
+            if board[row][col_] == 'r' or board[row][col_] == 'q':
+                return True
+            elif board[row][col_] != '-':
+                break
+        # проверяем на атаку по диагоналям
+        col_ = col + 1
+        for row_ in range(row + 1, 8):
+            if col_ < 8 and (board[row_][col_] == 'b' or board[row_][col_] == 'q'):
+                return True
+            elif board[row_][col_] != '-':
+                break
+            col_ += 1
+        col_ = col - 1
+        for row_ in range(row - 1, 0, -1):
+            if col_ >= 0 and (board[row_][col_] == 'b' or board[row_][col_] == 'q'):
+                return True
+            elif board[row_][col_] != '-':
+                break
+            col -= 1
+        col_ = col - 1
+        for row_ in range(row + 1, 8):
+            if col_ >= 0 and (board[row_][col_] == 'b' or board[row_][col_] == 'q'):
+                return True
+            elif board[row_][col_] != '-':
+                break
+            col_ -= 1
+        col_ = col + 1
+        for row_ in range(row - 1, 0, -1):
+            if col_ < 8 and (board[row_][col_] == 'b' or board[row_][col_] == 'q'):
+                return True
+            elif board[row_][col_] != '-':
+                break
+            col_ += 1
+        # проверяем на атаку конём
+        if row <= 6 and col <= 5 and board[row + 1][col + 2] == 'n':
+            return True
+        if row <= 6 and col >= 2 and board[row + 1][col - 2] == 'n':
+            return True
+        if row <= 5 and col >= 1 and board[row + 2][col - 1] == 'n':
+            return True
+        if row <= 5 and col <= 6 and board[row + 2][col + 1] == 'n':
+            return True
+        if row >= 2 and col <= 6 and board[row - 2][col + 1] == 'n':
+            return True
+        if row >= 2 and col >= 1 and board[row - 2][col - 1] == 'n':
+            return True
+        if row >= 1 and col >= 2 and board[row - 1][col - 2] == 'n':
+            return True
+        if row >= 1 and col <= 5 and board[row - 1][col + 2] == 'n':
+            return True
+        return False
+
+
+def isKingChecked(placement, color):
+    if color == "w":
+        return squareUnderAttack(placement, getWhiteKingLocation(piecePlacementToBoard(placement))[0], getWhiteKingLocation(piecePlacementToBoard(placement))[1])
+    else:
+        return squareUnderAttack(placement, getBlackKingLocation(piecePlacementToBoard(placement))[0], getBlackKingLocation(piecePlacementToBoard(placement))[1])
 
 def getMovesToTarget(placement, startSquare, targetSquare):
     # TODO дописать проверку на шах и ход конем
@@ -211,7 +380,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
     for i in range(len(startSquares)):
         placement = placementSaved
         placement = shiftPiece(placement, startSquares[i], targetSquare)
-        if isKingChecked(placement):
+        if isKingChecked(placement, "color"):
             startSquares.pop(i)
 
     moves = []

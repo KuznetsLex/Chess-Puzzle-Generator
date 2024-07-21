@@ -22,7 +22,7 @@ def generate(puzzleOrig):
 
 
 def main():
-    puzzleOrig = ["WTZrK", "2br1r2/p4p2/5b1k/1p2qP2/2ppPR1p/P2P1B2/1PPQ3P/R6K b - - 0 31", "f8g8 f4h4 h6g7 d2h6"]
+    puzzleOrig = ["WTZrK", "r3r1k1/p4ppp/2p2n2/1p6/3P1qb1/2NQR3/PPB2PP1/R1B3K1 w - - 5 18", "f8g8 f4h4 h6g7 d2h6"]
     generate(puzzleOrig)
 
 
