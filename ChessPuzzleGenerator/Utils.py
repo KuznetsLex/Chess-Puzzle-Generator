@@ -130,7 +130,7 @@ def squareUnderAttack(placement, row, col):
                 return True
             elif board[row_][col] != '-':
                 break
-        for row_ in range(row - 1, 0, -1):
+        for row_ in range(row - 1, -1, -1):
             if board[row_][col] == 'R' or board[row_][col] == 'Q':
                 return True
             elif board[row_][col] != '-':
@@ -140,7 +140,7 @@ def squareUnderAttack(placement, row, col):
                 return True
             elif board[row][col_] != '-':
                 break
-        for col_ in range(col - 1, 0, -1):
+        for col_ in range(col - 1, -1, -1):
             if board[row][col_] == 'R' or board[row][col_] == 'Q':
                 return True
             elif board[row][col_] != '-':
@@ -154,7 +154,7 @@ def squareUnderAttack(placement, row, col):
                 break
             col_ += 1
         col_ = col - 1
-        for row_ in range(row - 1, 0, -1):
+        for row_ in range(row - 1, -1, -1):
             if col_ >= 0 and (board[row_][col_] == 'B' or board[row_][col_] == 'Q'):
                 return True
             elif col_ >= 0 and board[row_][col_] != '-':
@@ -168,7 +168,7 @@ def squareUnderAttack(placement, row, col):
                 break
             col_ -= 1
         col_ = col + 1
-        for row_ in range(row - 1, 0, -1):
+        for row_ in range(row - 1, -1, -1):
             if col_ < 8 and (board[row_][col_] == 'B' or board[row_][col_] == 'Q'):
                 return True
             elif col_ < 8 and board[row_][col_] != '-':
@@ -205,7 +205,7 @@ def squareUnderAttack(placement, row, col):
                 return True
             elif board[row_][col] != '-':
                 break
-        for row_ in range(row - 1, 0, -1):
+        for row_ in range(row - 1, -1, -1):
             if board[row_][col] == 'r' or board[row_][col] == 'q':
                 return True
             elif board[row_][col] != '-':
@@ -215,7 +215,7 @@ def squareUnderAttack(placement, row, col):
                 return True
             elif board[row][col_] != '-':
                 break
-        for col_ in range(col - 1, 0, -1):
+        for col_ in range(col - 1, -1, -1):
             if board[row][col_] == 'r' or board[row][col_] == 'q':
                 return True
             elif board[row][col_] != '-':
@@ -229,7 +229,7 @@ def squareUnderAttack(placement, row, col):
                 break
             col_ += 1
         col_ = col - 1
-        for row_ in range(row - 1, 0, -1):
+        for row_ in range(row - 1, -1, -1):
             if col_ >= 0 and (board[row_][col_] == 'b' or board[row_][col_] == 'q'):
                 return True
             elif col_ >= 0 and board[row_][col_] != '-':
@@ -243,7 +243,7 @@ def squareUnderAttack(placement, row, col):
                 break
             col_ -= 1
         col_ = col + 1
-        for row_ in range(row - 1, 0, -1):
+        for row_ in range(row - 1, -1, -1):
             if col_ < 8 and (board[row_][col_] == 'b' or board[row_][col_] == 'q'):
                 return True
             elif col_ < 8 and board[row_][col_] != '-':
@@ -291,7 +291,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                     startSquares.append(coordsToSquareConverter((row, piece_coords[1])))
                 else:
                     break
-            for row in range(piece_coords[0] - 1, 0, -1):
+            for row in range(piece_coords[0] - 1, -1, -1):
                 if board[row][piece_coords[1]] == '-':
                     startSquares.append(coordsToSquareConverter((row, piece_coords[1])))
                 else:
@@ -301,7 +301,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                     startSquares.append(coordsToSquareConverter((piece_coords[0], col)))
                 else:
                     break
-            for col in range(piece_coords[1] - 1, 0, -1):
+            for col in range(piece_coords[1] - 1, -1, -1):
                 if board[piece_coords[0]][col] == '-':
                     startSquares.append(coordsToSquareConverter((piece_coords[0], col)))
                 else:
@@ -315,7 +315,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                 else:
                     break
             col = piece_coords[1] - 1
-            for row in range(piece_coords[0] - 1, 0, -1):
+            for row in range(piece_coords[0] - 1, -1, -1):
                 if col >= 0 and board[row][col] == '-':
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
@@ -329,7 +329,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                 else:
                     break
             col = piece_coords[1] + 1
-            for row in range(piece_coords[0] - 1, 0, -1):
+            for row in range(piece_coords[0] - 1, -1, -1):
                 if col < 8 and board[row][col] == '-':
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1
@@ -341,7 +341,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                     startSquares.append(coordsToSquareConverter((row, piece_coords[1])))
                 else:
                     break
-            for row in range(piece_coords[0] - 1, 0, -1):
+            for row in range(piece_coords[0] - 1, -1, -1):
                 if board[row][piece_coords[1]] == '-':
                     startSquares.append(coordsToSquareConverter((row, piece_coords[1])))
                 else:
@@ -351,7 +351,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                     startSquares.append(coordsToSquareConverter((piece_coords[0], col)))
                 else:
                     break
-            for col in range(piece_coords[1] - 1, 0, -1):
+            for col in range(piece_coords[1] - 1, -1, -1):
                 if board[piece_coords[0]][col] == '-':
                     startSquares.append(coordsToSquareConverter((piece_coords[0], col)))
                 else:
@@ -364,7 +364,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                 else:
                     break
             col = piece_coords[1] - 1
-            for row in range(piece_coords[0] - 1, 0, -1):
+            for row in range(piece_coords[0] - 1, -1, -1):
                 if col >= 0 and board[row][col] == '-':
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col -= 1
@@ -378,7 +378,7 @@ def getMovesToTarget(placement, startSquare, targetSquare):
                 else:
                     break
             col = piece_coords[1] + 1
-            for row in range(piece_coords[0] - 1, 0, -1):
+            for row in range(piece_coords[0] - 1, -1, -1):
                 if col < 8 and board[row][col] == '-':
                     startSquares.append(coordsToSquareConverter((row, col)))
                     col += 1

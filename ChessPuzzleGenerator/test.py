@@ -2,7 +2,7 @@ from ChessPuzzleGenerator import Utils
 
 
 def main():
-    puzzleOrig = ['ouoeO', '2q3k1/6pp/5P2/4p3/7P/5Q2/1P1r4/1K3R2 w - - 1 44', 'f6g7 c8c2 b1a1 c2b2']
+    puzzleOrig = ['ZI07y', 'Q7/3qppkp/3p1np1/2pP4/3nP2P/1rN1B1P1/4BPK1/8 b - - 2 27', 'b3c3 e3h6 g7h6 a8f8']
     origId = puzzleOrig[0]
     origFen = puzzleOrig[1]
     origMoveSet = puzzleOrig[2]
