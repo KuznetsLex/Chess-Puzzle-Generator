@@ -35,7 +35,10 @@ def generate(puzzleOrig):
     possiblePieces1 = Utils.getPossiblePieces(placement, moveSet[1][0:2])
     print(possiblePieces1)
     for piece in possiblePieces1:
-        if Utils.isKingChecked(placement, enemyKingColor):
+        savedPlacement1 = savedPlacement
+        savedPlacement1 = Utils.shiftPiece(savedPlacement1, origMoveSet[1][0:2], moveSet[1][0:2])
+        savedPlacement1 = Utils.makeMove(savedPlacement1, moveSet[0])
+        if Utils.isKingChecked(savedPlacement1, enemyKingColor):
             possiblePieces1.remove(piece)
             continue
     humanPiece1 = random.choice(possiblePieces1)
