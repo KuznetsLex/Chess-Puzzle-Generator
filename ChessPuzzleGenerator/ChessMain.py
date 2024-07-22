@@ -283,4 +283,4 @@ def animateMove(move, screen, board, clock):
 
 
 if __name__ == "__main__":
-    main(['5OXZi', 'r3R3/pp5p/3kNB2/1b1q4/5P2/8/5RPP/6K1 w', 'e8a8 d5d1 f2f1 d1f1'])
+    main(['Yg73U', '3Q4/5ppk/2Pp3p/1P1B4/2P5/6Pq/5PKP/5q2 w', 'd8d6 f1g1 g2h3 h3h5'])
