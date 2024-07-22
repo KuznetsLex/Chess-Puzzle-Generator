@@ -2,20 +2,11 @@
 def squareToCoordsConverter(square):
     row = 8 - int(square[1])
     x = square[0]
-    match x:
-        case 'a': col = 0
-        case 'b': col = 1
-        case 'c': col = 2
-        case 'd': col = 3
-        case 'e': col = 4
-        case 'f': col = 5
-        case 'g': col = 6
-        case 'h': col = 7
+    col = ord(x) - ord('a')
     return row, col
 
 
 num_to_letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
-
 
 def coordsToSquareConverter(coords):
     square = num_to_letters[coords[1]]
