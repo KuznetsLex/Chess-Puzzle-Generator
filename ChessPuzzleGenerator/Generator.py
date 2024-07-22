@@ -1,11 +1,14 @@
 import Utils
 import random
+import pandas as pd
+from PuzzleManager import Puzzle
 
 def generate(puzzleOrig):
-    "write"
+    df = pd.DataFrame(columns=['PuzzleId', 'FEN', 'Moves', 'Level'])
     origId = puzzleOrig[0]
     origFen = puzzleOrig[1]
     origMoveSet = puzzleOrig[2]
+    origLevel = puzzleOrig[3]
     origPlacement = origFen.split()[0]
     moveSet = origMoveSet
     placement = origPlacement
@@ -22,8 +25,13 @@ def generate(puzzleOrig):
     # генерация первого хода игрока
     humanPoses1 = Utils.getMovesToTarget(placement, moveSet[1][0:2], moveSet[1][2:4])
     for move in humanPoses1[:]:
+        moveSet = origMoveSet
+        placement = origPlacement
         savedPlacement1 = savedPlacement
         savedPlacement1 = Utils.shiftPiece(savedPlacement1, origMoveSet[1][0:2], move[0:2])
+        if move[0:2] == moveSet[0][2:4] or move[0:2] == moveSet[2][2:4]:
+            humanPoses1.remove(move)
+            continue
         if Utils.isKingChecked(savedPlacement1, playerKingColor):
             humanPoses1.remove(move)
             continue
@@ -31,12 +39,15 @@ def generate(puzzleOrig):
         if Utils.isKingChecked(savedPlacement1, enemyKingColor):
             humanPoses1.remove(move)
             continue
-
+    print(moveSet)
+    print(placement)
+    print(humanPoses1)
     for humanPose1 in humanPoses1:
         indexPos1 += 1
         moveSet[1] = humanPose1
         placement = Utils.shiftPiece(placement, origMoveSet[1][0:2], moveSet[1][0:2])
-
+        print(moveSet)
+        print(placement)
         possiblePieces1 = Utils.getPossiblePieces(placement, moveSet[1][0:2])
         # print(possiblePieces1)
         for piece in possiblePieces1[:]:
@@ -82,24 +93,27 @@ def generate(puzzleOrig):
                     indexPos2 += 1
                     moveSet[3] = humanPose2
                     placement = Utils.shiftPiece(placement, origMoveSet[3][0:2], moveSet[3][0:2])
-                    moveSet = " ".join(moveSet)
-                    id = str(origId) + '_' + str(indexPos1) + '_' + str(indexPiece1) + '_' + str(indexPos2)
-                    newPuzzle = [id, placement + " " + origFen.split()[1], moveSet]
                     correctFlag = True
                     for move in moveSet:
                         savedPlacement = placement
                         if Utils.isPieceOnTheWay(savedPlacement, move) == True:
                             correctFlag = False
                         placement = Utils.makeMove(savedPlacement, move)
+                    moveSet = " ".join(moveSet)
+                    id = str(origId) + '_' + str(indexPos1) + '_' + str(indexPiece1) + '_' + str(indexPos2)
+                    newPuzzle = [id, placement + " " + origFen.split()[1], moveSet, origLevel]
                     if correctFlag:
                         pass
-                        "write"
+                        df = df.append(newPuzzle, ignore_index=True)
+    return df
 
 
 def main():
-    puzzleOrig = ['ZI07y', 'Q7/3qppkp/3p1np1/2pP4/3nP2P/1rN1B1P1/4BPK1/8 b - - 2 27', 'b3c3 e3h6 g7h6 a8f8']
-    generate(puzzleOrig)
-
+    df_MateIn2_Generated = pd.DataFrame(columns=['PuzzleId', 'FEN', 'Moves', 'Level'])
+    for i in range(10):
+        puzzle_manager = Puzzle(4)
+        puzzle = puzzle_manager.parse()
+        df_MateIn2_Generated = pd.concat([df_MateIn2_Generated, generate(puzzle)])
 
 if __name__ == "__main__":
     main()
