@@ -33,7 +33,7 @@ def generate(puzzleOrig):
     placement = Utils.shiftPiece(placement, origMoveSet[1][0:2], moveSet[1][0:2])
 
     possiblePieces1 = Utils.getPossiblePieces(placement, moveSet[1][0:2])
-    print(possiblePieces1)
+    # print(possiblePieces1)
     for piece in possiblePieces1:
         savedPlacement1 = savedPlacement
         savedPlacement1 = Utils.shiftPiece(savedPlacement1, origMoveSet[1][0:2], moveSet[1][0:2])
@@ -54,6 +54,9 @@ def generate(puzzleOrig):
             savedPlacement2 = savedPlacement
             savedPlacement2 = Utils.shiftPiece(savedPlacement2, origMoveSet[1][0:2], moveSet[1][0:2])
             savedPlacement2 = Utils.shiftPiece(savedPlacement2, origMoveSet[3][0:2], move[0:2])
+            if move[0:2] == moveSet[0][2:4]:
+                humanPoses2.remove(move)
+                continue
             if Utils.isKingChecked(savedPlacement2, playerKingColor):
                 humanPoses2.remove(move)
                 continue
