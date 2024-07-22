@@ -2,7 +2,7 @@ import Utils
 import random
 
 def generate(puzzleOrig):
-
+    "write"
     origId = puzzleOrig[0]
     origFen = puzzleOrig[1]
     origMoveSet = puzzleOrig[2]
@@ -85,6 +85,15 @@ def generate(puzzleOrig):
                     moveSet = " ".join(moveSet)
                     id = str(origId) + '_' + str(indexPos1) + '_' + str(indexPiece1) + '_' + str(indexPos2)
                     newPuzzle = [id, placement + " " + origFen.split()[1], moveSet]
+                    correctFlag = True
+                    for move in moveSet:
+                        savedPlacement = placement
+                        if Utils.isPieceOnTheWay(savedPlacement, move) == True:
+                            correctFlag = False
+                        placement = Utils.makeMove(savedPlacement, move)
+                    if correctFlag:
+                        pass
+                        "write"
 
 
 def main():
