@@ -1,12 +1,19 @@
 import configparser as conf
 import tkinter as tk
-
+import logging
 import chess
 import chess.engine
 import joblib
 import pandas as pd
 from PIL import Image, ImageTk
-
+logging.basicConfig(
+    level=logging.INFO,  # Логирование сообщений уровня INFO и выше
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("chess_trainer.log"),
+        logging.StreamHandler()
+    ]
+)
 # Загрузка модели и scaler
 best_model = joblib.load('chess_rating_model.pkl')
 scaler = joblib.load('scaler.pkl')
@@ -162,6 +169,8 @@ class ChessApp:
         self.board.push(best_move)
         best_move_eval = engine.analyse(self.board, chess.engine.Limit(time=0.5))['score'].relative.score(
             mate_score=10000) / 100.0
+        log_msg = f"Best move: {best_move}, Evaluation: {best_move_eval:.2f}"
+        logging.info(log_msg)
         self.board.pop()
 
         # Выполняем ход пользователя
@@ -173,6 +182,7 @@ class ChessApp:
         difference = abs(best_move_eval - user_move_eval)
         if difference < 0.25:
             self.firstLine += 1
+
         elif 0.25 <= difference < 0.4:
             self.secondLine += 1
         elif 0.4 <= difference < 0.8:
@@ -180,6 +190,9 @@ class ChessApp:
         else:
             self.badMoves += 1
         self.totalMoves += 1
+        log_msg = f"User move: {move}, Evaluation: {user_move_eval:.2f}"
+        print(log_msg)  # По-прежнему выводим в консоль
+        logging.info(log_msg)  # Логируем в файл
 
         self.draw_board()
         del self.selected_square
@@ -246,12 +259,16 @@ class ChessApp:
         self.print_statistics()
 
     def print_statistics(self):
-        print(f"Total Moves: {self.totalMoves}")
-        print(f"First Line Moves: {self.firstLine}")
-        print(f"Second Line Moves: {self.secondLine}")
-        print(f"Third Line Moves: {self.thirdLine}")
-        print(f"Bad Moves: {self.badMoves}")
-
+        stats = (
+            f"Total Moves: {self.totalMoves}",
+            f"First Line Moves: {self.firstLine}",
+            f"Second Line Moves: {self.secondLine}",
+            f"Third Line Moves: {self.thirdLine}",
+            f"Bad Moves: {self.badMoves}"
+        )
+        for stat in stats:
+            print(stat)  # По-прежнему выводим в консоль
+            logging.info(stat)  # Логируем в файл
 
     def mainloop(self):
         self.root.mainloop()
