@@ -37,6 +37,7 @@ def generate(puzzleOrig):
     for piece in possiblePieces1:
         savedPlacement1 = savedPlacement
         savedPlacement1 = Utils.shiftPiece(savedPlacement1, origMoveSet[1][0:2], moveSet[1][0:2])
+        savedPlacement1 = Utils.spawnPiece(savedPlacement1, moveSet[1][0:2], piece)
         savedPlacement1 = Utils.makeMove(savedPlacement1, moveSet[0])
         if Utils.isKingChecked(savedPlacement1, enemyKingColor):
             possiblePieces1.remove(piece)
