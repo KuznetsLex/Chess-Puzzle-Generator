@@ -276,6 +276,53 @@ def isKingChecked(placement, color):
         return squareUnderAttack(placement, getBlackKingLocation(piecePlacementToBoard(placement))[0], getBlackKingLocation(piecePlacementToBoard(placement))[1])
 
 
+def isPieceOnTheWay(placement, move):
+    board = piecePlacementToBoard(placement)
+    start_coord = squareToCoordsConverter((move[0], move[1]))
+    finish_coord = squareToCoordsConverter((move[2], move[3]))
+    if start_coord[0] == finish_coord[0]:
+        frm = start_coord[1] + 1
+        to = finish_coord[1]
+        if start_coord[1] > finish_coord[1]:
+            frm, to = to, frm
+        for i in range(frm, to):
+            if board[start_coord[0]][i] != '-':
+                return True
+    elif start_coord[1] == finish_coord[1]:
+        frm = start_coord[0] + 1
+        to = finish_coord[0]
+        if start_coord[0] > finish_coord[0]:
+            frm, to = to, frm
+        for i in range(frm, to):
+            if board[i][start_coord[1]] != '-':
+                return True
+    elif start_coord[0] - finish_coord[0] == start_coord[1] - finish_coord[1]:
+        dif = abs(start_coord[0] - finish_coord[0])
+        if start_coord[0] > finish_coord[0]:
+            for i in range(1, dif):
+                if board[start_coord[0] - i][start_coord[1] - i] != '-':
+                    return True
+        else:
+            for i in range(1, dif):
+                if board[start_coord[0] + i][start_coord[1] + i] != '-':
+                    return True
+    elif start_coord[0] - finish_coord[0] == -(start_coord[1] - finish_coord[1]):
+        dif = abs(start_coord[0] - finish_coord[0])
+        if start_coord[0] > finish_coord[0]:
+            for i in range(1, dif):
+                if board[start_coord[0] - i][start_coord[1] + i] != '-':
+                    return True
+        else:
+            for i in range(1, dif):
+                if board[start_coord[0] + i][start_coord[1] - i] != '-':
+                    return True
+    return False
+
+
+
+
+
+
 def getMovesToTarget(placement, startSquare, targetSquare):
     startSquares = []
     placementSaved = placement
@@ -462,9 +509,9 @@ def spawnPiece(placement, square, piece):
     return placement
 
 
-def getKingLocation(placement, enemyKingColor):
+def getKingLocation(placement, kingColor):
     board = piecePlacementToBoard(placement)
-    king = 'k' if enemyKingColor == 'b' else 'K'
+    king = 'k' if kingColor == 'b' else 'K'
     for i in range (8):
         for j in range(8):
             if board[i][j] == king:
