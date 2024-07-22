@@ -82,7 +82,7 @@ def generate(puzzleOrig):
     return newPuzzle
 
 def main():
-    puzzleOrig = ["WTZrK", "r3r1k1/p4ppp/2p2n2/1p6/3P1qb1/2NQR3/PPB2PP1/R1B3K1 w - - 5 18", "f8g8 f4h4 h6g7 d2h6"]
+    puzzleOrig = ['ZI07y', 'Q7/3qppkp/3p1np1/2pP4/3nP2P/1rN1B1P1/4BPK1/8 b - - 2 27', 'b3c3 e3h6 g7h6 a8f8']
     generate(puzzleOrig)
 
 
