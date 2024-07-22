@@ -54,7 +54,7 @@ def generate(puzzleOrig):
             savedPlacement2 = savedPlacement
             savedPlacement2 = Utils.shiftPiece(savedPlacement2, origMoveSet[1][0:2], moveSet[1][0:2])
             savedPlacement2 = Utils.shiftPiece(savedPlacement2, origMoveSet[3][0:2], move[0:2])
-            if move[0:2] == moveSet[0][2:4]:
+            if move[0:2] == moveSet[0][2:4] or move[0:2] == moveSet[2][2:4]:
                 humanPoses2.remove(move)
                 continue
             if Utils.isKingChecked(savedPlacement2, playerKingColor):
