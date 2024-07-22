@@ -112,20 +112,20 @@ def analyze_games(usernames, max_games):
                                 bad_moves += 1
                         else:
                             if move_index < 10:
-                                if score_difference <= 0.5:
+                                if score_difference <= 0.25:
                                     first_line_moves += 1
-                                elif 0.5 < score_difference <= 1:
+                                elif 0.25 < score_difference <= 0.5:
                                     second_line_moves += 1
-                                elif 1 < score_difference <= 2:
+                                elif 0.5 < score_difference <= 0.8:
                                     third_line_moves += 1
                                 else:
                                     bad_moves += 1
                             else:
-                                if score_difference <= 0.5:
+                                if score_difference <= 0.2:
                                     first_line_moves += 1
-                                elif 0.5 < score_difference <= 1:
+                                elif 0.2 < score_difference <= 0.4:
                                     second_line_moves += 1
-                                elif score_difference > 1 and pre_move_score * 0.5 <= post_move_score:
+                                elif score_difference > 0.4 and pre_move_score * 0.5 <= post_move_score:
                                     third_line_moves += 1
                                 else:
                                     bad_moves += 1

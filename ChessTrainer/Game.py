@@ -101,7 +101,7 @@ class ChessApp:
                 y1 = rank * 60
                 x2 = x1 + 60
                 y2 = y1 + 60
-                color = "white" if (rank + file) % 2 == 0 else "blue"
+                color = "white" if (rank + file) % 2 == 0 else "BurlyWood"
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=color)
 
         for square in chess.SQUARES:
@@ -142,9 +142,6 @@ class ChessApp:
 
         x = event.x // 60
         y = 7 - (event.y // 60)
-        if self.is_board_flipped:
-            x = 7 - (event.x // 60)
-            y = event.y // 60
 
         square = chess.square(x, y)
 
@@ -154,6 +151,7 @@ class ChessApp:
                 self.selected_square = square
             elif hasattr(self, 'selected_square'):
                 move = chess.Move(self.selected_square, square)
+                print(move)
                 if move in self.board.legal_moves:
                     self.process_user_move(move)
                     self.after_user_move()
@@ -175,9 +173,9 @@ class ChessApp:
         difference = abs(best_move_eval - user_move_eval)
         if difference < 0.25:
             self.firstLine += 1
-        elif 0.25 <= difference < 0.5:
+        elif 0.25 <= difference < 0.4:
             self.secondLine += 1
-        elif 0.5 <= difference < 1.0:
+        elif 0.4 <= difference < 0.8:
             self.thirdLine += 1
         else:
             self.badMoves += 1
