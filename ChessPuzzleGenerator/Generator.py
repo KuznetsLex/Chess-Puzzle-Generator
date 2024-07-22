@@ -17,7 +17,7 @@ def generate(puzzleOrig):
 
     # генерация первого хода игрока
     humanPoses1 = Utils.getMovesToTarget(placement, moveSet[1][0:2], moveSet[1][2:4])
-    for move in humanPoses1:
+    for move in humanPoses1[:]:
         savedPlacement1 = savedPlacement
         savedPlacement1 = Utils.shiftPiece(savedPlacement1, origMoveSet[1][0:2], move[0:2])
         if Utils.isKingChecked(savedPlacement1, playerKingColor):
@@ -34,7 +34,7 @@ def generate(puzzleOrig):
 
     possiblePieces1 = Utils.getPossiblePieces(placement, moveSet[1][0:2])
     # print(possiblePieces1)
-    for piece in possiblePieces1:
+    for piece in possiblePieces1[:]:
         savedPlacement1 = savedPlacement
         savedPlacement1 = Utils.shiftPiece(savedPlacement1, origMoveSet[1][0:2], moveSet[1][0:2])
         savedPlacement1 = Utils.spawnPiece(savedPlacement1, moveSet[1][0:2], piece)
@@ -50,7 +50,7 @@ def generate(puzzleOrig):
         humanPoses2 = Utils.getMovesToTarget(placement, moveSet[3][0:2], moveSet[3][2:4])
         # print(humanPoses2)
         # if Utils.getPieceBySquare(placement, moveSet[2][0:2]) == enemyKing:
-        for move in humanPoses2:
+        for move in humanPoses2[:]:
             savedPlacement2 = savedPlacement
             savedPlacement2 = Utils.shiftPiece(savedPlacement2, origMoveSet[1][0:2], moveSet[1][0:2])
             savedPlacement2 = Utils.shiftPiece(savedPlacement2, origMoveSet[3][0:2], move[0:2])

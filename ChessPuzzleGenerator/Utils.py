@@ -159,7 +159,7 @@ def squareUnderAttack(placement, row, col):
                 return True
             elif col_ >= 0 and board[row_][col_] != '-':
                 break
-            col -= 1
+            col_ -= 1
         col_ = col - 1
         for row_ in range(row + 1, 8):
             if col_ >= 0 and (board[row_][col_] == 'B' or board[row_][col_] == 'Q'):
@@ -234,7 +234,7 @@ def squareUnderAttack(placement, row, col):
                 return True
             elif col_ >= 0 and board[row_][col_] != '-':
                 break
-            col -= 1
+            col_ -= 1
         col_ = col - 1
         for row_ in range(row + 1, 8):
             if col_ >= 0 and (board[row_][col_] == 'b' or board[row_][col_] == 'q'):
