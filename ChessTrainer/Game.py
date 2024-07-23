@@ -1,11 +1,15 @@
 import configparser as conf
-import tkinter as tk
 import logging
+import tkinter as tk
+
 import chess
 import chess.engine
 import joblib
 import pandas as pd
 from PIL import Image, ImageTk
+
+from ChessTrainer.model import evaluate_position
+
 logging.basicConfig(
     level=logging.INFO,  # Логирование сообщений уровня INFO и выше
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -164,6 +168,7 @@ class ChessApp:
                     self.after_user_move()
 
     def process_user_move(self, move):
+        pre_move_score = evaluate_position(self.board)
         best_move_info = engine.analyse(self.board, chess.engine.Limit(time=0.5))
         best_move = best_move_info['pv'][0]
         self.board.push(best_move)
@@ -180,15 +185,26 @@ class ChessApp:
 
         # Подсчет статистики
         difference = abs(best_move_eval - user_move_eval)
-        if difference < 0.25:
-            self.firstLine += 1
+        user_winning = pre_move_score >= 2.5
+        if user_winning:
+            if difference <= 0.6:
+                self.firstLine += 1
+            elif 0.6 < difference <= 1:
+                self.secondLine += 1
+            elif 1 < difference <= 1.5:
+                self.thirdLine += 1
+            else:
+                self.badMoves += 1
+        if not user_winning:
+            if difference < 0.25:
+                self.firstLine += 1
 
-        elif 0.25 <= difference < 0.4:
-            self.secondLine += 1
-        elif 0.4 <= difference < 0.8:
-            self.thirdLine += 1
-        else:
-            self.badMoves += 1
+            elif 0.25 <= difference < 0.4:
+                self.secondLine += 1
+            elif 0.4 <= difference < 0.8:
+                self.thirdLine += 1
+            else:
+                self.badMoves += 1
         self.totalMoves += 1
         log_msg = f"User move: {move}, Evaluation: {user_move_eval:.2f}"
         print(log_msg)  # По-прежнему выводим в консоль
