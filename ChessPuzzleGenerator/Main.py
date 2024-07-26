@@ -6,6 +6,22 @@ def main():
     difficulty_level = 4  # выбираем уровень сложности (1-8)
     number_of_puzzles_to_generate = 5  # выбираем количество задач
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     # извлекаем случайную задачу
     puzzle_manager = Puzzle(difficulty_level)
     puzzle_orig = puzzle_manager.parse()
