@@ -5,7 +5,7 @@
 В репозитории отркажена работа за две недели Большой Математической Мастерской 2024. Проект продолжает развиваться здесь: https://github.com/EkaterinaDerisheva/ChessPuzzleGenerator
 
 ## Demo
-<video src='https://github.com/user-attachments/assets/b872a384-4bb8-4501-8386-53a1e93ee025' width=180/>
+https://github.com/user-attachments/assets/b872a384-4bb8-4501-8386-53a1e93ee025
 
 ## Build&Run
 Для разработки используется Python 3.10
