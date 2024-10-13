@@ -1,0 +1,6 @@
+['380tD', 'r4r1k/6pp/q2b1p2/1p2pn2/6RN/1Q2B3/PP4PP/R6K b - - 3 25', 'f5e3 h4g6 h7g6 g4h4']
+['380tD', 'r4r1k/6pp/q2b1p2/1p2pn1R/5N2/1Q2B3/PP4PP/R6K b', 'f5e3 f4g6 h7g6 h5h4']
+['380tD', 'r4r1k/4N1pp/q2b1p1R/1p2pn2/8/1Q2B3/PP4PP/R6K b', 'f5e3 e7g6 h7g6 h6h4']
+['380tD', 'r4r1k/4N1pp/q2b1p2/1p2pn2/5R2/1Q2B3/PP4PP/R6K b', 'f5e3 e7g6 h7g6 f4h4']
+['380tD', 'r4r1k/6pp/q2b1p2/1p2pn1R/7N/1Q2B3/PP4PP/R6K b', 'f5e3 h4g6 h7g6 h5h4']
+['380tD', 'r4r1k/6pp/q2b1p2/1p2pn2/5N2/1Q2B2R/PP4PP/R6K b', 'f5e3 f4g6 h7g6 h3h4']

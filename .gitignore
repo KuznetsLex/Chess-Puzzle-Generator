@@ -162,3 +162,7 @@ cython_debug/
 #.idea/
 
 *.properties
+.DS_Store
+.idea
+ChessPuzzleGenerator/ChessAI.py
+ChessPuzzleGenerator/test.py
